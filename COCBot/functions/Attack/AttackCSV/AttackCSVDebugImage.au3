@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func AttackCSVDEBUGIMAGE()
@@ -21,7 +21,12 @@ Func AttackCSVDEBUGIMAGE()
 	Local $EditedImage = _GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2)
 	Local $testx
 	Local $hGraphic = _GDIPlus_ImageGetGraphicsContext($EditedImage)
+	Local $hFormat = _GDIPlus_StringFormatCreate()
 	Local $hBrush = _GDIPlus_BrushCreateSolid(0xFFFFFFFF)
+	Local $hFamily = _GDIPlus_FontFamilyCreate("Arial")
+	Local $hFont = _GDIPlus_FontCreate($hFamily, 14)
+	Local $hArrowEndCap = _GDIPlus_ArrowCapCreate(10, 10)
+
 	Local $pixel
 
 	; Open box of crayons :-)
@@ -39,6 +44,7 @@ Func AttackCSVDEBUGIMAGE()
 	Local $hPenYellow = _GDIPlus_PenCreate(0xFFFFD800, 2)
 	Local $hPenLtGrey = _GDIPlus_PenCreate(0xFFCCCCCC, 2)
 	Local $hPenWhite = _GDIPlus_PenCreate(0xFFFFFFFF, 2)
+	Local $hPenWhiteBold = _GDIPlus_PenCreate(0xFFFFFFFF, 5)
 	Local $hPenMagenta = _GDIPlus_PenCreate(0xFFFF00F6, 2)
 
 
@@ -134,118 +140,118 @@ Func AttackCSVDEBUGIMAGE()
 	Next
 
 	;DRAW DROP POINTS EXAMPLES
-	$testx = MakeDropPoints("TOP-LEFT-DOWN", 10, 2, "EXT-INT")
+
+	$testx = MakeDropPoints("BOTTOM-RIGHT-DOWN", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
-	Next
-
-	$testx = MakeDropPoints("TOP-LEFT-DOWN", 10, 4, "EXT-INT") ;
-	For $i = 0 To UBound($testx) - 1
-		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
-	Next
-
-	$testx = MakeDropPoints("BOTTOM-LEFT-UP", 10, 2, "EXT-INT")
-	For $i = 0 To UBound($testx) - 1
-		$pixel = $testx[$i]
 		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 	Next
 
-	$testx = MakeDropPoints("BOTTOM-LEFT-UP", 10, 4, "EXT-INT") ;
+	$testx = MakeDropPoints("BOTTOM-RIGHT-DOWN", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 12, $pixel[1] - 12, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("TOP-RIGHT-DOWN", 10, 2, "EXT-INT")
+	$testx = MakeDropPoints("BOTTOM-RIGHT-UP", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 	Next
 
-	$testx = MakeDropPoints("TOP-RIGHT-DOWN", 10, 4, "EXT-INT") ;
+	$testx = MakeDropPoints("BOTTOM-RIGHT-UP", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 12, $pixel[1] - 12, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("BOTTOM-RIGHT-UP", 10, 2, "EXT-INT")
+	$testx = MakeDropPoints("TOP-RIGHT-DOWN", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 5, $pixel[1] + 5, "Arial", 12)
+	Next
+
+	$testx = MakeDropPoints("TOP-RIGHT-DOWN", 10, 0, "EXT-INT") ;
+	For $i = 0 To UBound($testx) - 1
+		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] + 10, $pixel[1] - 10, "Arial", 12)
+	Next
+
+	$testx = MakeDropPoints("TOP-RIGHT-UP", 10, 0, "INT-EXT")
+	For $i = 0 To UBound($testx) - 1
+		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 5, $pixel[1] + 5, "Arial", 12)
+	Next
+
+	$testx = MakeDropPoints("TOP-RIGHT-UP", 10, 0, "EXT-INT") ;
+	For $i = 0 To UBound($testx) - 1
+		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] + 10, $pixel[1] - 10, "Arial", 12)
+	Next
+
+	$testx = MakeDropPoints("TOP-LEFT-UP", 10, 0, "INT-EXT")
+	For $i = 0 To UBound($testx) - 1
+		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 	Next
 
-	$testx = MakeDropPoints("BOTTOM-RIGHT-UP", 10, 4, "EXT-INT") ;
+	$testx = MakeDropPoints("TOP-LEFT-UP", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 12, $pixel[1] - 12, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("TOP-LEFT-UP", 10, 2, "INT-EXT")
+	$testx = MakeDropPoints("TOP-LEFT-DOWN", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
+		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
 	Next
 
-	$testx = MakeDropPoints("TOP-LEFT-UP", 10, 4, "INT-EXT") ;
+	$testx = MakeDropPoints("TOP-LEFT-DOWN", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 12, $pixel[1] - 12, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("BOTTOM-LEFT-DOWN", 10, 2, "INT-EXT")
+	$testx = MakeDropPoints("BOTTOM-LEFT-UP", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 5, $pixel[1] + 5, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("BOTTOM-LEFT-DOWN", 10, 4, "INT-EXT") ;
+	$testx = MakeDropPoints("BOTTOM-LEFT-UP", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] + 10, $pixel[1] - 10, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("TOP-RIGHT-UP", 10, 2, "INT-EXT")
+	$testx = MakeDropPoints("BOTTOM-LEFT-DOWN", 10, 0, "INT-EXT")
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 5, $pixel[1] + 5, "Arial", 12)
 	Next
 
-	$testx = MakeDropPoints("TOP-RIGHT-UP", 10, 4, "INT-EXT") ;
+	$testx = MakeDropPoints("BOTTOM-LEFT-DOWN", 10, 0, "EXT-INT") ;
 	For $i = 0 To UBound($testx) - 1
 		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
 		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
+		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] + 10, $pixel[1] - 10, "Arial", 12)
 	Next
-
-	$testx = MakeDropPoints("BOTTOM-RIGHT-DOWN", 10, 2, "INT-EXT")
-	For $i = 0 To UBound($testx) - 1
-		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0], $pixel[1], "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenRed)
-	Next
-
-	$testx = MakeDropPoints("BOTTOM-RIGHT-DOWN", 10, 4, "INT-EXT") ;
-	For $i = 0 To UBound($testx) - 1
-		$pixel = $testx[$i]
-		_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $pixel[0] - 10, $pixel[1] - 10, "Arial", 12)
-		_GDIPlus_GraphicsDrawEllipse($hGraphic, $pixel[0], $pixel[1], 6, 6, $hPenMdGreen)
-	Next
-
 	; 06 - DRAW MINES, ELIXIR, DRILLS ------------------------------------------------------------------------
 	For $i = 0 To UBound($g_aiPixelMine) - 1
 		$pixel = $g_aiPixelMine[$i]
@@ -262,23 +268,77 @@ Func AttackCSVDEBUGIMAGE()
 
 	; - DRAW GOLD STORAGE -------------------------------------------------------
 	If $g_bCSVLocateStorageGold = True And IsArray($g_aiCSVGoldStoragePos) Then
-			For $i = 0 To UBound($g_aiCSVGoldStoragePos) - 1
-				$pixel = $g_aiCSVGoldStoragePos[$i]
-				_GDIPlus_GraphicsDrawRect($hGraphic, $pixel[0] - 10, $pixel[1] - 15, 20, 20, $hPenWhite)
-			Next
+		For $i = 0 To UBound($g_aiCSVGoldStoragePos) - 1
+			$pixel = $g_aiCSVGoldStoragePos[$i]
+			_GDIPlus_GraphicsDrawRect($hGraphic, $pixel[0] - 10, $pixel[1] - 15, 20, 20, $hPenWhite)
+		Next
 	EndIf
 
 	; - DRAW ELIXIR STORAGE ---------------------------------------------------------
 	If $g_bCSVLocateStorageElixir = True And IsArray($g_aiCSVElixirStoragePos) Then
-			For $i = 0 To UBound($g_aiCSVElixirStoragePos) - 1
-				$pixel = $g_aiCSVElixirStoragePos[$i]
-				_GDIPlus_GraphicsDrawRect($hGraphic, $pixel[0] - 10, $pixel[1] - 15, 20, 20, $hPenMagenta)
-			Next
+		For $i = 0 To UBound($g_aiCSVElixirStoragePos) - 1
+			$pixel = $g_aiCSVElixirStoragePos[$i]
+			_GDIPlus_GraphicsDrawRect($hGraphic, $pixel[0] - 10, $pixel[1] - 15, 20, 20, $hPenMagenta)
+		Next
 	EndIf
 
 
 	; - DRAW TOWNHALL -------------------------------------------------------------------
 	_GDIPlus_GraphicsDrawRect($hGraphic, $g_iTHx - 5, $g_iTHy - 10, 30, 30, $hPenRed)
+
+	;- DRAW BUILDINGS LEFT-RIGHT DROP POINTS IF MENTIONED
+	If $g_iMatchMode = $DB Then
+		Local $filename = $g_sAttackScrScriptName[$DB]
+	Else
+		Local $filename = $g_sAttackScrScriptName[$LB]
+	EndIf
+	If FileExists($g_sCSVAttacksPath & "\" & $filename & ".csv") Then
+		Local $aLines = FileReadToArray($g_sCSVAttacksPath & "\" & $filename & ".csv")
+		Local $value1 = "", $value2 = "", $value3 = "", $value4 = "", $value5 = "", $value6 = "", $value7 = "", $value8 = "", $value9 = ""
+		Local $f, $line, $acommand, $command
+		; Read in lines of text until the EOF is reached
+		For $iLine = 0 To UBound($aLines) - 1
+			$line = $aLines[$iLine]
+			If @error = -1 Then ExitLoop
+			$acommand = StringSplit($line, "|")
+			If $acommand[0] >= 8 Then
+				; Set values
+				For $i = 2 To (UBound($acommand) - 1)
+					Assign("value" & Number($i - 1), StringStripWS(StringUpper($acommand[$i]), $STR_STRIPTRAILING))
+				Next
+				$command = StringStripWS(StringUpper($acommand[1]), $STR_STRIPTRAILING)
+				If $command = "MAKE" Then
+					If CheckCsvValues("MAKE", 2, $value2) Then
+						Local $sidex = StringReplace($value2, "-", "_")
+						If CheckCsvValues("MAKE", 1, $value1) And CheckCsvValues("MAKE", 5, $value5) And CheckCsvValues("MAKE", 8, $value8) Then     ; Vector is targeted towards building v2.0.3
+							; new field definitions:
+							; $side = target side string
+							; value3 = Drop points can be 1,3,5,7... ODD number Only e.g if 5=[2, 1, 0, -1, -2] will Add tiles to left and right to make drop point 3 would be exact positon of building
+							; value4 = addtiles
+							; value5 = versus ignore direction
+							; value6 = RandomX ignored as image find location will be "random" without need to add more variability
+							; value7 = randomY ignored as image find location will be "random" without need to add more variability
+							; value8 = Building target for drop points
+							If $value3 > 1 Then         ; check for valid number of drop points
+								Local $tmpArray = MakeTargetDropPoints(Eval($sidex), $value3, $value4, $value8)
+								If (UBound($tmpArray) > 0) Then
+									Local $aLineStartPoint = $tmpArray[0]
+									Local $aLineEndPoint = $tmpArray[UBound($tmpArray) - 1]
+									_GDIPlus_GraphicsDrawLine($hGraphic, $aLineStartPoint[0], $aLineStartPoint[1], $aLineEndPoint[0], $aLineEndPoint[1], $hPenRed)
+									For $i = 0 To UBound($tmpArray) - 1
+										Local $aPixel = $tmpArray[$i]
+										_GDIPlus_GraphicsDrawString($hGraphic, $i + 1, $aPixel[0] - 10, $aPixel[1] - 10, "Arial", 12)
+									Next
+								EndIf
+							EndIf
+						EndIf
+					EndIf
+				ElseIf $command = "DROP" Then
+					ExitLoop
+				EndIf
+			EndIf
+		Next
+	EndIf
 
 	; - DRAW Eagle -------------------------------------------------------------------
 	If $g_bCSVLocateEagle = True And IsArray($g_aiCSVEagleArtilleryPos) Then
@@ -325,15 +385,43 @@ Func AttackCSVDEBUGIMAGE()
 		Next
 	EndIf
 
-	; 99 -  DRAW SLICE NUMBERS
-	_GDIPlus_GraphicsDrawString($hGraphic, "1", 580, 580, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "2", 750, 450, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "3", 750, 200, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "4", 580, 110, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "5", 260, 110, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "6", 110, 200, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "7", 110, 450, "Arial", 20)
-	_GDIPlus_GraphicsDrawString($hGraphic, "8", 310, 580, "Arial", 20)
+	; - DRAW MAIN SIDE Text -------------------------------------------------------------------
+	Local $aMainSidesText[8] = ["TOP-LEFT", "TOP-RIGHT", "BOTTOM-RIGHT", "BOTTOM-LEFT"]
+	Local $aMainSidesPosition[4][4] = [ _
+			[$DiamondMiddleX - 280, $DiamondMiddleY - 215, $DiamondMiddleX - 280 + 80, $DiamondMiddleY - 215 + 60], _ ;TOP-LEFT
+			[$DiamondMiddleX + 280, $DiamondMiddleY - 215, $DiamondMiddleX + 280 - 80, $DiamondMiddleY - 215 + 60], _ ;TOP-RIGHT
+			[$DiamondMiddleX + 280, $DiamondMiddleY + 215, $DiamondMiddleX + 280 - 80, $DiamondMiddleY + 215 - 60], _ ;BOTTOM-RIGHT
+			[$DiamondMiddleX - 280, $DiamondMiddleY + 215, $DiamondMiddleX - 280 + 80, $DiamondMiddleY + 215 - 60]] ;BOTTOM-LEFT
+	Local $iMainSidePostionIndex = _ArraySearch($aMainSidesText, $MAINSIDE)
+	If $iMainSidePostionIndex <> -1 Then
+		_GDIPlus_ArrowCapSetMiddleInset($hArrowEndCap, 0.5)
+		_GDIPlus_PenSetCustomEndCap($hPenWhiteBold, $hArrowEndCap)
+		_GDIPlus_GraphicsDrawLine($hGraphic, $aMainSidesPosition[$iMainSidePostionIndex][0], $aMainSidesPosition[$iMainSidePostionIndex][1], $aMainSidesPosition[$iMainSidePostionIndex][2], $aMainSidesPosition[$iMainSidePostionIndex][3], $hPenWhiteBold)
+	EndIf
+	; - DRAW ALL SIDE Text -------------------------------------------------------------------
+	Local $aBaseSidesPosition[8][2] = [ _
+			[$DiamondMiddleX + 120, $DiamondMiddleY + 215], _ ;BOTTOM-RIGHT-DOWN
+			[$DiamondMiddleX + 295, $DiamondMiddleY + 085], _ ;BOTTOM-RIGHT-UP
+			[$DiamondMiddleX + 295, $DiamondMiddleY - 120], _ ;TOP-RIGHT-DOWN
+			[$DiamondMiddleX + 115, $DiamondMiddleY - 260], _ ;TOP-RIGHT-UP
+			[$DiamondMiddleX - 180, $DiamondMiddleY - 260], _ ;TOP-LEFT-UP
+			[$DiamondMiddleX - 350, $DiamondMiddleY - 125], _ ;TOP-LEFT-DOWN
+			[$DiamondMiddleX - 350, $DiamondMiddleY + 085], _ ;BOTTOM-LEFT-UP
+			[$DiamondMiddleX - 250, $DiamondMiddleY + 215]] ;BOTTOM-LEFT-DOWN
+
+	Local $aBaseSidesText[8] = ["BOTTOM-RIGHT-DOWN", "BOTTOM-RIGHT-UP", "TOP-RIGHT-DOWN", "TOP-RIGHT-UP", "TOP-LEFT-UP", "TOP-LEFT-DOWN", "BOTTOM-LEFT-UP", "BOTTOM-LEFT-DOWN"]
+	Local $aBaseCalculatedSides[8] = [$FRONT_LEFT, $FRONT_RIGHT, $RIGHT_FRONT, $RIGHT_BACK, $LEFT_FRONT, $LEFT_BACK, $BACK_LEFT, $BACK_RIGHT]
+	Local $aBaseSidesTextPrint[8] = ["FRONT_LEFT", "FRONT_RIGHT", "RIGHT_FRONT", "RIGHT_BACK", "LEFT_FRONT", "LEFT_BACK", "BACK_LEFT", "BACK_RIGHT"]
+
+	For $i = 0 To 7
+		Local $iSidePostionIndex = _ArraySearch($aBaseSidesText, $aBaseCalculatedSides[$i])
+		If $iSidePostionIndex <> -1 Then
+			Local $tLayout = _GDIPlus_RectFCreate($aBaseSidesPosition[$iSidePostionIndex][0], $aBaseSidesPosition[$iSidePostionIndex][1], 0, 0)
+			Local $aInfo = _GDIPlus_GraphicsMeasureString($hGraphic, (($iSidePostionIndex <> 0 And $iSidePostionIndex <> 7) ? StringReplace($aBaseSidesTextPrint[$i], "_", @CRLF) : $aBaseSidesTextPrint[$i]), $hFont, $tLayout, $hFormat)
+			_GDIPlus_GraphicsDrawStringEx($hGraphic, (($iSidePostionIndex <> 0 And $iSidePostionIndex <> 7) ? StringReplace($aBaseSidesTextPrint[$i], "_", @CRLF) : $aBaseSidesTextPrint[$i]), $hFont, $aInfo[0], $hFormat, $hBrush)
+		EndIf
+	Next
+
 
 	Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
 	Local $Time = @HOUR & "." & @MIN & "." & @SEC
@@ -357,11 +445,15 @@ Func AttackCSVDEBUGIMAGE()
 	_GDIPlus_PenDispose($hPenYellow)
 	_GDIPlus_PenDispose($hPenLtGrey)
 	_GDIPlus_PenDispose($hPenWhite)
+	_GDIPlus_PenDispose($hPenWhiteBold)
 	_GDIPlus_PenDispose($hPenMagenta)
 	_GDIPlus_BrushDispose($hBrush)
-	_GDIPlus_GraphicsDispose($hGraphic)
+	_GDIPlus_StringFormatDispose($hFormat)
+	_GDIPlus_FontDispose($hFont)
+	_GDIPlus_FontFamilyDispose($hFamily)
+	_GDIPlus_ArrowCapDispose($hArrowEndCap)
 	_GDIPlus_BitmapDispose($EditedImage)
-
+	_GDIPlus_GraphicsDispose($hGraphic)
 	; open image
 	If TestCapture() = True Then
 		ShellExecute($filename)

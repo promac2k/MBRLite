@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: KnowJack (07-2015), CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -111,7 +111,7 @@ Func DefaultZoomOut($ZoomOutKey = "{DOWN}", $tryCtrlWheelScrollAfterCycles = 40,
 			If Not $bAndroidZoomOut Then
 				; original windows based zoom-out
 				If $g_bDebugSetlog Then SetDebugLog("Index = " & $i, $COLOR_DEBUG) ; Index=2X loop count if success, will be increment by 1 if controlsend fail
-				If _Sleep($DELAYZOOMOUT2) Then Return
+			   If _Sleep($DELAYZOOMOUT2) Then Return True
 				If $g_bChkBackgroundMode = False And $g_bNoFocusTampering = False Then
 					$result0 = ControlFocus($g_hAndroidWindow, "", "")
 				Else
@@ -557,7 +557,7 @@ Func CorrectZoomoutScript($Main = True)
 	If Not $g_bRunState Then Return
 
 	; Over the Water , Bottom Left , Main Village
-	Local $aLeftFingerFirstSpot = [160, 610]
+	Local $aLeftFingerFirstSpot = [200, 610]
 
 	If Not $Main Then
 		; To Top Left , Builder Base compatibility

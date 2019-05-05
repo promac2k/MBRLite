@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Cosote (12-2015)
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -41,6 +41,7 @@ Global $g_aiMouseOffsetWindowOnly = [0, 0]
 Global $g_bPullPushSharedPrefsAbdCommand = False ; If true, push and pull with adb pull/push is tried first before falling back to use shared folder (some adb pull can create shared_prefs subfolder causing problems)
 Global $g_PushedSharedPrefsProfile = "" ; Last Profile name shared_prefs were pushed
 Global $g_PushedSharedPrefsProfile_Timer = 0 ; Last __TimerInit() shared_prefs were pushed
+Global $g_bAndroidControlUseParentPos = False
 
 Func InitAndroidConfig($bRestart = False)
 	FuncEnter(InitAndroidConfig)
@@ -73,6 +74,7 @@ Func InitAndroidConfig($bRestart = False)
 	$g_bAndroidBackgroundLaunch = $g_bAndroidBackgroundLaunchEnabled = True ; Enabled Android Background launch using Windows Scheduled Task
 	$g_bAndroidBackgroundLaunched = False ; True when Android was launched in headless mode without a window
 	$g_bUpdateAndroidWindowTitle = False ; If Android has always same title (like LeapDroid) instance name will be added
+	$g_bAndroidControlUseParentPos = False ; If true, control pos is used from parent control (only used to fix docking for Nox in DirectX mode)
 	; screencap might have disabled backgroundmode
 	If $g_bAndroidAdbScreencap Then
 		; update background checkbox
@@ -172,7 +174,7 @@ Func UpdateAndroidConfig($instance = Default, $emulator = Default)
 	If $emulator <> Default Then SetLog("Unknown Android Emulator " & $emulator, $COLOR_RED)
 	If $instance = "" Then $instance = Default
 	If $instance = Default Then $instance = $g_avAndroidAppConfig[$g_iAndroidConfig][1]
-	SetDebugLog("UpdateAndroidConfig(""" & $instance & """)")
+	SetDebugLog("UpdateAndroidConfig(" & DoubleQuote($instance) & ")")
 
 	InitAndroidConfig(False)
 	$g_sAndroidInstance = $instance ; Clone or instance of emulator or "" if not supported/default instance
@@ -187,7 +189,7 @@ Func UpdateAndroidConfig($instance = Default, $emulator = Default)
 	; validate install and initialize Android variables
 	Local $Result = InitAndroid(False, False)
 
-	SetDebugLog("UpdateAndroidConfig(""" & $instance & """) END")
+	SetDebugLog("UpdateAndroidConfig(" & DoubleQuote($instance) & ") END")
 	Return FuncReturn($Result)
 EndFunc   ;==>UpdateAndroidConfig
 
@@ -266,7 +268,7 @@ Func UpdateHWnD($hWin, $bRestart = True)
 		; check if Android must become DPI Aware
 		If GetProcessDpiAwareness(GetAndroidPid()) = 0 Then	AndroidDpiAwareness()
 		EndIf
-	#ce
+	#ce Was coded for LeapDroid when manually launch DPI unaware and bot was DPI aware, then bot resize LeapDroid but too pixy... unfortunately making bot DPI aware did not fix it, so better just restart bot?
 	GetAndroidControlClass(True, True)
 	If @error Then Return FuncReturn(SetError(1, 0, False))
 	Return FuncReturn(SetError(0, 0, True))
@@ -540,19 +542,27 @@ Func _WinGetAndroidHandle($bFindByTitle = False)
 			If IsArray($aWinList) = 0 Then
 				Local $aWinList2 = _WinAPI_EnumProcessWindows($pid, True)
 				If IsArray($aWinList2) = 1 And $aWinList2[0][0] > 0 Then
-					Local $aWinList[$aWinList2[0][0] + 1][2]
+					Local $aWinList[$aWinList2[0][0] + 1][5]
 					$aWinList[0][0] = $aWinList2[0][0]
 					For $i = 1 To $aWinList2[0][0]
+						Local $aPos = WinGetPos($aWinList2[$i][0])
 						$aWinList[$i][0] = WinGetTitle($aWinList2[$i][0])
 						$aWinList[$i][1] = $aWinList2[$i][0]
+						$aWinList[$i][2] = $aWinList2[$i][1]
+						If UBound($aPos) > 3 Then
+							$aWinList[$i][3] = $aPos[2]
+							$aWinList[$i][4] = $aPos[3]
+						EndIf
+						SetDebugLog("Found Android window: " & $aWinList[$i][0] & ", " & $aWinList[$i][1] & ", " & $aWinList[$i][2] & ", " & $aWinList[$i][3] & ", " & $aWinList[$i][4])
 					Next
 				EndIf
 			EndIf
 			If IsArray($aWinList) = 1 Then
+				SetDebugLog("Found " & $aWinList[0][0] & " windows, searching for '" & $g_sAppPaneName & "' with class '" & $g_sAppClassInstance & "'")
 				For $i = 1 To $aWinList[0][0]
 					$t = $aWinList[$i][0]
 					$hWin = $aWinList[$i][1]
-					If $pid = WinGetProcess($hWin) And ControlGetHandle2($hWin, $g_sAppPaneName, $g_sAppClassInstance) <> 0 Then
+					If $pid = WinGetProcess($hWin) And ControlGetHandle2($hWin, $g_sAppPaneName, $g_sAppClassInstance) <> 0 And $aWinList[$i][3] > 400 And $aWinList[$i][4] > 400 Then
 						SetDebugLog("Found " & $g_sAndroidEmulator & " Window '" & $t & "' (" & $hWin & ") by PID " & $pid & " ('" & $commandLine & "')")
 						UpdateHWnD($hWin)
 						$g_sAndroidTitle = UpdateAndroidWindowTitle($g_hAndroidWindow, $t)
@@ -638,7 +648,7 @@ Func GetAndroidRunningInstance($bStrictCheck = True)
 	Local $i
 	If $runningInstance = "" And @error <> 0 Then ; Not implemented
 		Local $a[2] = [0, ""]
-		SetDebugLog("GetAndroidRunningInstance: Try to find """ & $g_sAndroidProgramPath & """")
+		SetDebugLog("GetAndroidRunningInstance: Try to find " & DoubleQuote($g_sAndroidProgramPath))
 		Local $pids = ProcessesExist($g_sAndroidProgramPath, "", 1) ; find any process
 		If UBound($pids) > 0 Then
 			Local $currentInstance = $g_sAndroidInstance
@@ -646,7 +656,7 @@ Func GetAndroidRunningInstance($bStrictCheck = True)
 				Local $pid = $pids[$i]
 				; assume last parameter is instance
 				Local $commandLine = ProcessGetCommandLine($pid)
-				SetDebugLog("GetAndroidRunningInstance: Found """ & $commandLine & """ by PID=" & $pid)
+				SetDebugLog("GetAndroidRunningInstance: Found " & DoubleQuote($commandLine) & " by PID=" & $pid)
 				Local $lastSpace = StringInStr($commandLine, " ", 0, -1)
 				If $lastSpace > 0 Then
 					$g_sAndroidInstance = StringStripWS(StringMid($commandLine, $lastSpace + 1), 3)
@@ -655,7 +665,7 @@ Func GetAndroidRunningInstance($bStrictCheck = True)
 				EndIf
 				; validate
 				If WinGetAndroidHandle() <> 0 Then
-					SetDebugLog("Running " & $g_sAndroidEmulator & " instance found: """ & $g_sAndroidInstance & """")
+					SetDebugLog("Running " & $g_sAndroidEmulator & " instance found: " & DoubleQuote($g_sAndroidInstance))
 					If $a[0] = 0 Or $g_sAndroidInstance = $currentInstance Then
 						$a[0] = $g_hAndroidWindow
 						$a[1] = $g_sAndroidInstance
@@ -666,7 +676,7 @@ Func GetAndroidRunningInstance($bStrictCheck = True)
 				EndIf
 			Next
 		EndIf
-		If $a[0] <> 0 Then SetDebugLog("Running " & $g_sAndroidEmulator & " instance is """ & $g_sAndroidInstance & """")
+		If $a[0] <> 0 Then SetDebugLog("Running " & $g_sAndroidEmulator & " instance is " & DoubleQuote($g_sAndroidInstance))
 		Return FuncReturn($a)
 	EndIf
 	Return FuncReturn($runningInstance)
@@ -782,7 +792,7 @@ Func FindPreferredAdbPath()
 	; If necessaru copy to Emulator folder
 	If $Version < $NewVersion Then
 		SetDebugLog("Let's Update the adb version!", $COLOR_ACTION)
-		Local $DirPath = $g_sAndroidEmulator <> "BlueStacks2" ? StringReplace($adbPath, "adb.exe", "") : StringReplace($adbPath, "HD-Adb.exe", "")
+		Local $DirPath = $g_sAndroidEmulator <> "BlueStacks2" And $g_sAndroidEmulator <> "BlueStacks" ? StringReplace($adbPath, "adb.exe", "") : StringReplace($adbPath, "HD-Adb.exe", "")
 		SetDebugLog("ADB Destination Dir: " & $DirPath)
 		SetDebugLog("ADB EXE : " & $adbPath)
 		If FileCopy($sPathAdbv140, $adbPath, $FC_OVERWRITE) = 0 Then SetDebugLog("Adb was not updated!", $COLOR_ERROR)
@@ -989,6 +999,7 @@ Func _OpenAndroid($bRestart = False, $bStartOnlyAndroid = False)
 	If Not InitAndroid() Then
 		SetLog("Unable to open " & $g_sAndroidEmulator & ($g_sAndroidInstance = "" ? "" : " instance '" & $g_sAndroidInstance & "'"), $COLOR_ERROR)
 		SetLog("Please check emulator/installation", $COLOR_ERROR)
+		SetLog("To switch to another Emulator, please use bot with command line parameter", $COLOR_BLUE)
 		SetLog("Unable to continue........", $COLOR_ERROR)
 		btnStop()
 		SetError(1, 1, -1)
@@ -1229,7 +1240,7 @@ Func WaitForRunningVMS($WaitInSec = 120, $hTimer = 0)
 		If Not $g_bRunState Then Return True
 		$cmdOutput = LaunchConsole($__VBoxManage_Path, "list runningvms", $process_killed)
 		If Not $g_bRunState Then Return True
-		$running = StringInStr($cmdOutput, """" & $g_sAndroidInstance & """") > 0
+		$running = StringInStr($cmdOutput, DoubleQuote($g_sAndroidInstance)) > 0
 		If $running = True Then ExitLoop
 		If $hTimer <> 0 Then _StatusUpdateTime($hTimer)
 		_Sleep(3000) ; Sleep 3 Seconds
@@ -1681,29 +1692,32 @@ Func _AndroidAdbLaunchShellInstance($wasRunState = Default, $rebootAndroidIfNecc
 			EndIf
 			Local $pathFound = False
 			Local $iMount
-			For $iMount = 0 To 9
-				If $g_sAndroidPicturesPath = "" Then
-					SetDebugLog("Problem in configuration, $g_sAndroidPicturesPath is empty", $COLOR_ERROR)
-					ExitLoop
-				EndIf
+			For $iMount = 0 To 29
 				$s = AndroidAdbSendShellCommand("mount", Default, $wasRunState, False)
-				Local $Path = $g_sAndroidPicturesPath
-				If StringRight($Path, 1) = "/" Then $Path = StringLeft($Path, StringLen($Path) - 1)
-				Local $aRegExResult = StringRegExp($s, $Path, $STR_REGEXPARRAYMATCH)
+				Local $path = $g_sAndroidPicturesPath
+				If StringRight($path, 1) = "/" Then $path = StringLeft($path, StringLen($path) - 1)
+				Local $aRegExResult = StringRegExp($s, "[^ ]+(?: on)* ([^ ]+).+", $STR_REGEXPARRAYGLOBALMATCH)
+				;_ArrayDisplay($aRegExResult)
 				SetError(0)
-				If UBound($aRegExResult) = 0 Then Local $aRegExResult = []
-				_ArrayConcatenate($aRegExResult, StringSplit(((StringLeft($Path, 1) = "(" And StringRight($Path, 1) = ")") ? StringMid($Path, 2, StringLen($Path) - 2) : $Path), "|", $STR_NOCOUNT))
+				Local $aMounts[0]
+				If $path Then _ArrayConcatenate($aMounts, StringSplit(((StringLeft($path, 1) = "(" And StringRight($path, 1) = ")") ? StringMid($path, 2, StringLen($path) - 2) : $path), "|", $STR_NOCOUNT))
+				If UBound($aRegExResult) > 0 Then _ArrayConcatenate($aMounts, $aRegExResult)
 				; check which path contains dummy file
 				Local $dummyFile = StringMid(_Crypt_HashData($g_sBotTitle & _Now(), $CALG_SHA1), 3)
-				FileWriteLine($g_sAndroidPicturesHostPath & $dummyFile, _Now())
-				For $i = 0 To UBound($aRegExResult) - 1
-					$Path = $aRegExResult[$i]
-					If $Path = "" Then ContinueLoop
-					If StringRight($Path, 1) <> "/" Then $Path &= "/"
-					$s = AndroidAdbSendShellCommand("set result=$(ls '" & $Path & $dummyFile & "' >&2)", Default, $wasRunState, False)
-					If StringInStr($s, "No such file or directory") = 0 And StringInStr($s, "syntax error:") = 0 Then
+				If FileWriteLine($g_sAndroidPicturesHostPath & $dummyFile, _Now()) Then
+					SetDebugLog("Created dummy file: " & $g_sAndroidPicturesHostPath & $dummyFile)
+				Else
+					SetLog("Cannot create dummy file: " & $g_sAndroidPicturesHostPath & $dummyFile, $COLOR_ERROR)
+					Return SetError(4, 0)
+				EndIf
+				For $i = 0 To UBound($aMounts) - 1
+					$path = $aMounts[$i]
+					If $path = "" Then ContinueLoop
+					If StringRight($path, 1) <> "/" Then $path &= "/"
+					$s = AndroidAdbSendShellCommand("set result=$(ls '" & $path & $dummyFile & "' >&2)", 10000, $wasRunState, False) ; use timeout of 10 Seconds
+					If StringInStr($s, $dummyFile) > 0 And StringInStr($s, $dummyFile & ":") = 0 And StringInStr($s, "No such file or directory") = 0 And StringInStr($s, "syntax error") = 0 And StringInStr($s, "Permission denied") = 0 Then
 						$pathFound = True
-						$g_sAndroidPicturesPath = $Path
+						$g_sAndroidPicturesPath = $path
 						SetDebugLog("Using " & $g_sAndroidPicturesPath & " for Android shared folder")
 						ExitLoop
 					EndIf
@@ -1719,9 +1733,10 @@ Func _AndroidAdbLaunchShellInstance($wasRunState = Default, $rebootAndroidIfNecc
 				If _Sleep(6000) Then Return
 			Next
 			If $pathFound = False Then
-				SetLog($g_sAndroidEmulator & " cannot use ADB on shared folder, """ & $g_sAndroidPicturesPath & """ not found", $COLOR_ERROR)
+				SetLog($g_sAndroidEmulator & " cannot use ADB on shared folder, " & DoubleQuote($g_sAndroidPicturesPath) & " not found", $COLOR_ERROR)
 			EndIf
-
+			; clear output
+			AndroidAdbSendShellCommand("", Default, $wasRunState, False)
 			; update $g_iAndroidSystemAPI ; getprop ro.build.version.sdk
 			$g_iAndroidVersionAPI = Int(AndroidAdbSendShellCommand("getprop ro.build.version.sdk", Default, $wasRunState, False))
 			SetDebugLog("Android Version API = " & $g_iAndroidVersionAPI)
@@ -1749,7 +1764,7 @@ Func _AndroidAdbLaunchShellInstance($wasRunState = Default, $rebootAndroidIfNecc
 				$s = AndroidAdbSendShellCommand($renice & "$$", Default, $wasRunState, False) ; increase shell priority to maximum
 				EndIf
 				$s &= AndroidAdbSendShellCommand("stop media", Default, $wasRunState, False) ; stop media service as it can consume up to 30% Android CPU
-			#ce
+			#ce 2016-04-08 cosote Replaced by shell.init.script
 			Local $scriptFile = ""
 			If $scriptFile = "" And FileExists($g_sAdbScriptsPath & "\shell.init." & $g_sAndroidEmulator & ".script") = 1 Then $scriptFile = "shell.init." & $g_sAndroidEmulator & ".script"
 			If $scriptFile = "" Then $scriptFile = "shell.init.script"
@@ -1776,26 +1791,23 @@ Func _AndroidAdbLaunchShellInstance($wasRunState = Default, $rebootAndroidIfNecc
 				; use getevent to find mouse input device
 				$s = AndroidAdbSendShellCommand("getevent -p", Default, $wasRunState, False)
 				SetDebugLog($g_sAndroidEmulator & " getevent -p: " & $s)
-				Local $aRegExResult = StringRegExp($s, "(\/dev\/input\/event\d+)[\r\n]+.+""" & $g_sAndroidMouseDevice & """((?!\/dev\/input\/event)[\s\S])+ABS", $STR_REGEXPARRAYMATCH)
+				Local $aRegExResult = StringRegExp($s, "(\/dev\/input\/event\d+)[\r\n]+.+" & Chr(34) & $g_sAndroidMouseDevice & Chr(34) & "((?!\/dev\/input\/event)[\s\S])+ABS", $STR_REGEXPARRAYMATCH)
 				If @error = 0 Then
 					$g_sAndroidMouseDevice = $aRegExResult[0]
 					SetDebugLog("Using " & $g_sAndroidMouseDevice & " for mouse events")
 				Else
 					; ok, now use first device with 35/36 expected dimensions
-					$aRegExResult = StringRegExp($s, "(\/dev\/input\/event\d+)[\r\n]+.+"".+""((?!\/dev\/input\/event)[\s\S])+ABS \(\d+\): 0035.+max " & $g_iGAME_WIDTH & ".+\n.+0036.+max " & $g_iGAME_HEIGHT, $STR_REGEXPARRAYMATCH)
+					$aRegExResult = StringRegExp($s, "(\/dev\/input\/event\d+)[\r\n]+.+" & Chr(34) & ".+" & Chr(34) & "((?!\/dev\/input\/event)[\s\S])+ABS \(\d+\): 0035.+max " & $g_iGAME_WIDTH & ".+\n.+0036.+max " & $g_iGAME_HEIGHT, $STR_REGEXPARRAYMATCH)
 					If @error = 0 Then
 						SetDebugLog("Using " & $aRegExResult[0] & " for mouse events (" & $g_sAndroidMouseDevice & " not found)")
 						$g_sAndroidMouseDevice = $aRegExResult[0]
 					Else
 						$g_bAndroidAdbClick = False
-						SetLog($g_sAndroidEmulator & " cannot use ADB for mouse events, """ & $g_sAndroidMouseDevice & """ not found", $COLOR_ERROR)
-						SuspendAndroid($SuspendMode)
+						SetLog($g_sAndroidEmulator & " cannot use ADB for mouse events, " & DoubleQuote($g_sAndroidMouseDevice) & " not found", $COLOR_ERROR)
 						Return SetError(2, 1)
 					EndIf
 				EndIf
 			EndIf
-			SuspendAndroid($SuspendMode)
-			Return SetError(0, 1)
 		Else
 			SetDebugLog($g_sAndroidEmulator & " ADB use " & $g_sAndroidMouseDevice & " for mouse events")
 		EndIf
@@ -1812,7 +1824,7 @@ Func AndroidAdbTerminateShellInstance()
 		If ClosePipe($g_iAndroidAdbProcess[0], $g_iAndroidAdbProcess[1], $g_iAndroidAdbProcess[2], $g_iAndroidAdbProcess[3], $g_iAndroidAdbProcess[4]) = 1 Then
 			SetDebugLog("ADB shell terminated, PID = " & $g_iAndroidAdbProcess[0])
 		Else
-			SetDebugLog("ADB shell not terminated, PID = " & $g_iAndroidAdbProcess[0], $COLOR_ERROR)
+			SetDebugLog("ADB shell already terminated, PID = " & $g_iAndroidAdbProcess[0])
 		EndIf
 		$g_iAndroidAdbProcess[0] = 0
 	EndIf
@@ -1930,7 +1942,8 @@ Func _AndroidAdbSendShellCommand($cmd = Default, $timeout = Default, $wasRunStat
 			If $bNoShellTerminate = False Then AndroidAdbTerminateShellInstance()
 		EndIf
 	EndIf
-	Return SetError($error, Int(__TimerDiff($hTimer)) & "ms,#" & $loopCount, $s)
+
+	Return SetError($error, Int(__TimerDiff($hTimer)), $s)
 EndFunc   ;==>_AndroidAdbSendShellCommand
 
 Func GetBinaryEvent($type, $code, $value)
@@ -2119,7 +2132,7 @@ Func AndroidAdbSendShellCommandScript($scriptFile, $variablesArray = Default, $c
 			EndIf
 			FileSetTime($hostPath & $scriptFileSh, $scriptModifiedTime, $FT_MODIFIED) ; set modification date of source
 		EndIf
-		$s = AndroidAdbSendShellCommand("sh """ & $androidPath & $scriptFileSh & """", $timeout, $wasRunState, $EnsureShellInstance)
+		$s = AndroidAdbSendShellCommand("sh " & DoubleQuote($androidPath & $scriptFileSh), $timeout, $wasRunState, $EnsureShellInstance)
 		If BitAND($g_iAndroidSecureFlags, 2) = 2 Then
 			; delete files
 			FileDelete($hostPath & $scriptFileSh)
@@ -2236,8 +2249,8 @@ Func _AndroidScreencap($iLeft, $iTop, $iWidth, $iHeight, $iRetryCount = 0)
 	EndIf
 
 	FileDelete($hostPath & $Filename)
-	$s = AndroidAdbSendShellCommand("screencap """ & $androidPath & $Filename & """", $g_iAndroidAdbScreencapWaitAdbTimeout, $wasRunState)
-	;$s = AndroidAdbSendShellCommand("screencap """ & $androidPath & $filename & """", -1, $wasRunState)
+	$s = AndroidAdbSendShellCommand("screencap " & DoubleQuote($androidPath & $Filename), $g_iAndroidAdbScreencapWaitAdbTimeout, $wasRunState)
+	;$s = AndroidAdbSendShellCommand("screencap " & DoubleQuote($androidPath & $filename), -1, $wasRunState)
 	If $__TEST_ERROR_SLOW_ADB_SCREENCAP_DELAY > 0 Then Sleep($__TEST_ERROR_SLOW_ADB_SCREENCAP_DELAY)
 	Local $shellLogInfo = @extended
 
@@ -2368,7 +2381,7 @@ Func _AndroidScreencap($iLeft, $iTop, $iWidth, $iHeight, $iRetryCount = 0)
 			$hBitmap = _GDIPlus_BitmapCreateFromFile($hostPath & $filename)
 			If $hBitmap = 0 Then Sleep(10)
 			WEnd
-		#ce
+		#ce causes open file handles
 
 		While $iSize < $ExpectedFileSize And __TimerDiff($hTimer) < $g_iAndroidAdbScreencapWaitFileTimeout
 			If $hFile = 0 Then $hFile = _WinAPI_CreateFile($hostPath & $Filename, 2, 2, 7)
@@ -2633,7 +2646,7 @@ Func AndroidMoveMouseAnywhere()
 	EndIf
 
 	$g_bSilentSetLog = True
-	AndroidAdbSendShellCommand("dd if=""" & $androidPath & $Filename & """ of=" & $g_sAndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1", Default)
+	AndroidAdbSendShellCommand("dd if=" & DoubleQuote($androidPath & $Filename) & " of=" & $g_sAndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1", Default)
 	If BitAND($g_iAndroidSecureFlags, 2) = 2 Then
 		; delete file
 		FileDelete($hostPath & $Filename)
@@ -2856,7 +2869,7 @@ Func _AndroidFastClick($x, $y, $times = 1, $speed = 0, $checkProblemAffect = Tru
 			AndroidMoveMouseAnywhere()
 		EndIf
 		$g_bSilentSetLog = True
-		AndroidAdbSendShellCommand("dd if=""" & $androidPath & $Filename & """ of=" & $g_sAndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1", Default)
+		AndroidAdbSendShellCommand("dd if=" & DoubleQuote($androidPath & $Filename) & " of=" & $g_sAndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1", Default)
 		If BitAND($g_iAndroidSecureFlags, 2) = 2 Then
 			; delete file
 			FileDelete($hostPath & $Filename)
@@ -2946,7 +2959,7 @@ Func AndroidSendText($sText, $SymbolFix = False, $wasRunState = $g_bRunState)
 		; replace space with %s and remove/replace umlaut and non-english characters
 		; still ? and * will be treated as file wildcards... might need to be replaced as well
 		Local $newText = $sText
-		StringRegExpReplace($newText, "[^A-Za-z0-9\.,\?""!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]'~ ]", ".")
+		StringRegExpReplace($newText, "[^A-Za-z0-9\.,\?" & Chr(34) & "!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]'~ ]", ".")
 		If @extended <> 0 Then
 			If $SymbolFix = False Then SetDebugLog("Cannot use ADB to send input text, use Windows method", $COLOR_ERROR)
 			Return SetError(10, 0)
@@ -2955,10 +2968,10 @@ Func AndroidSendText($sText, $SymbolFix = False, $wasRunState = $g_bRunState)
 			If $g_iAndroidAdbInputWordsCharLimit = 0 Then
 				; send entire text at once
 				; escape special characters
-				$newText = StringRegExpReplace($newText, "([\\\?""\$\^&\*\(\)\+<>\|'~;])", "\\$1")
+				$newText = StringRegExpReplace($newText, "([\\\?" & Chr(34) & "\$\^&\*\(\)\+<>\|'~;])", "\\$1")
 				; replace " " with "%s"
 				$newText = StringReplace($newText, " ", "%s")
-				AndroidAdbSendShellCommand("input text " & $newText, Default, $wasRunState)
+				AndroidAdbSendShellCommand("input text " & $newText, 6000, $wasRunState) ; use 6 secs for additional timeout
 			Else
 				; send one word per command
 				Local $words = StringSplit($newText, " ")
@@ -2967,8 +2980,8 @@ Func AndroidSendText($sText, $SymbolFix = False, $wasRunState = $g_bRunState)
 					$word = $words[$i]
 					While StringLen($word) > 0
 						; escape special characters
-						$newWord = StringRegExpReplace(StringLeft($word, $g_iAndroidAdbInputWordsCharLimit), "([\\\?""\$\^&\*\(\)\+<>\|'~;])", "\\$1")
-						AndroidAdbSendShellCommand("input text " & $newWord, Default, $wasRunState)
+						$newWord = StringRegExpReplace(StringLeft($word, $g_iAndroidAdbInputWordsCharLimit), "([\\\?" & Chr(34) & "\$\^&\*\(\)\+<>\|'~;])", "\\$1")
+						AndroidAdbSendShellCommand("input text " & $newWord, 6000, $wasRunState) ; use 6 secs for additional timeout
 						$word = StringMid($word, $g_iAndroidAdbInputWordsCharLimit + 1)
 					WEnd
 					; send space
@@ -3023,7 +3036,7 @@ EndFunc   ;==>AndroidSwipeNotWorking
 Func AndroidInputSwipe($x1, $y1, $x2, $y2, $wasRunState = $g_bRunState) ; Only used for BlueStacks/BlueStacks2
 	AndroidAdbLaunchShellInstance($wasRunState)
 	If @error = 0 Then
-		AndroidAdbSendShellCommand("input swipe " & $x1 & " " & $y1 & " " & $x2 & " " & $y2 & ";input tap " & $x2 & " " & $y2, Default, $wasRunState)
+		AndroidAdbSendShellCommand("input swipe " & $x1 & " " & $y1 & " " & $x2 & " " & $y2 & ";input tap " & $x2 & " " & $y2, 6000, $wasRunState) ; use 6 secs for additional timeout
 		SetError(0, 0)
 	Else
 		Local $error = @error
@@ -3049,7 +3062,7 @@ Func SuspendAndroidTime($Action = False)
 		; debug stats
 		SetDebugLog("SuspendAndroidTime: Time = " & $g_iSuspendAndroidTime & ", Count = " & $g_iSuspendAndroidTimeCount)
 	Else
-		; Did tests on EBO battle count-down, and fo some reason 50ms need to be removed here... hope works for other systems, too
+		; Did tests on EBO battle count-down, and for some reason 50ms need to be removed here... hope works for other systems, too
 		Local $iSuspendTime = (_HPTimerDiff($g_hSuspendAndroidTimer) - 50)
 		If $iSuspendTime > 0 Then
 			$g_iSuspendAndroidTime += $iSuspendTime
@@ -3247,7 +3260,7 @@ Func GetAndroidProcessPID($sPackage = Default, $bForeground = True, $iRetryCount
 	; u0_a27    2912  142   663800  98656      30    10        0      3     ffffffff b7591617    S      com.tencent.tmgp.supercell.clashofclans
 	; u0_a26    2740  73    1601704 76380      20    0         0      0     ffffffff b7489435    S      com.supercell.clashofclans.guopan
 	If AndroidInvalidState() Then Return 0
-	Local $cmd = "set result=$(ps -p|grep """ & $g_sAndroidGamePackage & """ >&2)"
+	Local $cmd = "set result=$(ps -p|grep " & DoubleQuote($g_sAndroidGamePackage) & " >&2)"
 	Local $output = AndroidAdbSendShellCommand($cmd)
 	SetDebugLog("$g_sAndroidGamePackage: " & $g_sAndroidGamePackage)
 	SetDebugLog("GetAndroidProcessPID StdOut :" & $output)
@@ -3345,28 +3358,28 @@ Func AndroidPicturePathAutoConfig($myPictures = Default, $subDir = Default, $bSe
 	If $subDir = Default Then $subDir = $g_sAndroidEmulator & " Photo"
 	If $bSetLog = Default Then $bSetLog = True
 	Local $Result = False
-	Local $Path
+	Local $path
 	If $g_bAndroidPicturesPathAutoConfig = True Then
 		If $g_sAndroidPicturesHostPath = "" Then
 			If $myPictures = Default Then $myPictures = RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\", "My Pictures")
 			If @error = 0 And FileExists($myPictures) = 1 Then
 				If $subDir <> "" Then $subDir = "\" & $subDir
-				$Path = $myPictures & $subDir
+				$path = $myPictures & $subDir
 				; add tailing backslash
-				If StringRight($Path, 1) <> "\" Then $Path &= "\"
-				If FileExists($Path) = 1 Then
-					$g_sAndroidPicturesHostPath = $Path
+				If StringRight($path, 1) <> "\" Then $path &= "\"
+				If FileExists($path) = 1 Then
+					$g_sAndroidPicturesHostPath = $path
 					SetGuiLog("Shared folder: '" & $g_sAndroidPicturesHostPath & "' will be added to " & $g_sAndroidEmulator, $COLOR_SUCCESS, $bSetLog)
 					$Result = True
-				ElseIf DirCreate($Path) = 1 Then
-					$g_sAndroidPicturesHostPath = $Path
+				ElseIf DirCreate($path) = 1 Then
+					$g_sAndroidPicturesHostPath = $path
 					SetGuiLog("Configure " & $g_sAndroidEmulator & " to support shared folder", $COLOR_SUCCESS, $bSetLog)
-					SetGuiLog("Folder created: " & $Path, $COLOR_SUCCESS, $bSetLog)
+					SetGuiLog("Folder created: " & $path, $COLOR_SUCCESS, $bSetLog)
 					SetGuiLog("This shared folder will be added to " & $g_sAndroidEmulator, $COLOR_SUCCESS, $bSetLog)
 					$Result = True
 				Else
 					SetGuiLog("Cannot configure " & $g_sAndroidEmulator & " shared folder", $COLOR_SUCCESS, $bSetLog)
-					SetGuiLog("Cannot create folder: " & $Path, $COLOR_ERROR, $bSetLog)
+					SetGuiLog("Cannot create folder: " & $path, $COLOR_ERROR, $bSetLog)
 					$g_bAndroidPicturesPathAutoConfig = False
 				EndIf
 			Else
@@ -3375,14 +3388,14 @@ Func AndroidPicturePathAutoConfig($myPictures = Default, $subDir = Default, $bSe
 				$g_bAndroidPicturesPathAutoConfig = False
 			EndIf
 		Else
-			$Path = $g_sAndroidPicturesHostPath
-			If FileExists($Path) = 1 Then
+			$path = $g_sAndroidPicturesHostPath
+			If FileExists($path) = 1 Then
 				; path exists, nothing to do
-			ElseIf DirCreate($Path) = 1 Then
-				SetGuiLog("Shared folder created: " & $Path, $COLOR_SUCCESS, $bSetLog)
+			ElseIf DirCreate($path) = 1 Then
+				SetGuiLog("Shared folder created: " & $path, $COLOR_SUCCESS, $bSetLog)
 			Else
 				SetGuiLog("Cannot configure " & $g_sAndroidEmulator & " shared folder", $COLOR_SUCCESS, $bSetLog)
-				SetGuiLog("Cannot create folder: " & $Path, $COLOR_ERROR, $bSetLog)
+				SetGuiLog("Cannot create folder: " & $path, $COLOR_ERROR, $bSetLog)
 				$g_bAndroidPicturesPathAutoConfig = False
 			EndIf
 		EndIf
@@ -3400,7 +3413,7 @@ Func OpenAdbShell($bRunInitScript = True)
 	EndIf
 
 	Local $iPID = ShellExecute($g_sAndroidAdbPath, "-s " & $g_sAndroidAdbDevice & " shell")
-	SetLog("Launched ADB Shell, PID=" & $iPID & ": """ & $g_sAndroidAdbPath & """ -s " & $g_sAndroidAdbDevice & " shell")
+	SetLog("Launched ADB Shell, PID=" & $iPID & ": " & DoubleQuote($g_sAndroidAdbPath) & " -s " & $g_sAndroidAdbDevice & " shell")
 	Local $hWnd = 0
 	Local $hTimer = __TimerInit()
 	Do
@@ -3609,7 +3622,7 @@ Func PullSharedPrefs($sProfile = $g_sProfileCurrentName)
 		Return SetError(0, 0, $Result)
 	EndIf
 	If $g_bPullPushSharedPrefsAbdCommand Then
-		$cmdOutput = LaunchConsole($g_sAndroidAdbPath, "-s " & $g_sAndroidAdbDevice & " pull /data/data/" & $g_sAndroidGamePackage & "/shared_prefs """ & $g_sPrivateProfilePath & "\" & $sProfile & "\shared_prefs""", $process_killed)
+		$cmdOutput = LaunchConsole($g_sAndroidAdbPath, "-s " & $g_sAndroidAdbDevice & " pull /data/data/" & $g_sAndroidGamePackage & "/shared_prefs " & DoubleQuote($g_sPrivateProfilePath & "\" & $sProfile & "\shared_prefs"), $process_killed)
 	Else
 		$cmdOutput = ""
 	EndIf
@@ -3723,9 +3736,10 @@ Func PushSharedPrefs($sProfile = $g_sProfileCurrentName, $bCloseGameIfRunning = 
 	Local $iFiles = UBound($aNewFiles) - 1
 	Local $iFilesPushed = 0
 
+	_Sleep(1000)
 	; use ADB push to transfer files
 	If $g_bPullPushSharedPrefsAbdCommand Then
-		$cmdOutput = LaunchConsole($g_sAndroidAdbPath, "-s " & $g_sAndroidAdbDevice & " push """ & $g_sPrivateProfilePath & "\" & $sProfile & "\shared_prefs"" /data/data/" & $g_sAndroidGamePackage & "/shared_prefs", $process_killed)
+		$cmdOutput = LaunchConsole($g_sAndroidAdbPath, "-s " & $g_sAndroidAdbDevice & " push " & DoubleQuote($g_sPrivateProfilePath & "\" & $sProfile & "\shared_prefs") & " /data/data/" & $g_sAndroidGamePackage & "/shared_prefs", $process_killed)
 	Else
 		$cmdOutput = ""
 	EndIf
@@ -3848,7 +3862,7 @@ Func CheckEmuNewVersions()
 		Case "MEmu"
 			$NewVersion = GetVersionNormalized("5.2.3.0")
 		Case "Nox"
-			$NewVersion = GetVersionNormalized("6.2.2.0")
+			$NewVersion = GetVersionNormalized("6.2.7.1")
 		Case Else
 			$NewVersion = GetVersionNormalized("25.1.0.0")
 	EndSwitch
@@ -3883,4 +3897,5 @@ Func CheckScreenDim(ByRef $iLeft, ByRef $iTop, ByRef $iWidth, ByRef $iHeight)
 	EndIf
 
 EndFunc   ;==>CheckScreenDim
+
 

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -46,6 +46,8 @@ Func runBuilderBase($Test = False)
 
 	If _Sleep(2000) Then Return
 
+	If Not BuilderBaseZoomOut(False, True) Then Return
+
 	If $g_bRestart = True Then Return
 	; If checkObstacles() Then SetLog("Window clean required, but no problem for MultiBot!", $COLOR_INFO)
 
@@ -76,6 +78,8 @@ Func runBuilderBase($Test = False)
 	If $g_iAvailableAttacksBB > 0 Or Not $g_bChkBBStopAt3 Then CheckArmyBuilderBase()
 	; Just a loop to benefit from Clock Tower Boost
 	For $i = 0 To 10
+		; See The Pending Actions Like ScreenShot cmd , Arg False => is not at Main Village
+		NotifyPendingActions(False)
 		; Zoomout
 		If $g_bRestart = True Then Return
 		If Not $g_bRunState Then Return

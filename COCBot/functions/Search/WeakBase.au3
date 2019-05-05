@@ -6,10 +6,10 @@
 ; Return values .:
 ; Author ........: LunaEclipse(April 2016)
 ; Modified ......: MonkeyHunter (04-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -336,10 +336,10 @@ EndFunc   ;==>IsWeakBase
 ; Return values .: 1D array with highest level matched data found
 ; Author ........: MonkeyHunter (04-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $statFile = "", $minLevel = 0, $maxLevel = 100, $bForceCaptureRegion = True)

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: mikemikemikecoc (2016)
 ; Modified ......: cosote (2016-Aug), CodeSlinger69 (2017), MonkeyHunter (05-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -65,11 +65,7 @@ Func CreateSplashScreen($iSteps = Default)
 		Local $iHeight = $iY + $iT + $iB + 60 ; size = image+Top space+Bottom space+60
 		Local $iCenterX = @DesktopWidth / 2 ; find center of main display
 		Local $iCenterY = @DesktopHeight / 2
-		If $g_bMyBotDance Then
-			Local $iTop = @DesktopHeight - 50 - $iHeight ; position splash UI near task bar
-		Else
-			Local $iTop = $iCenterY - $iHeight / 2
-		EndIf
+		Local $iTop = $iCenterY - $iHeight / 2
 		Local $iLeft = $iCenterX - $iX / 2 ; position splash UI centered on width
 
 		; Create Splash container

@@ -6,10 +6,10 @@
 ; Return values .: NA
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -1129,6 +1129,7 @@ Func SaveConfig_600_35_1()
 	_Ini_Add("other", "ChkDisableNotifications", $g_bDisableNotifications)
 	_Ini_Add("other", "ChkFixClanCastle", $g_bForceClanCastleDetection ? 1 : 0)
 	_Ini_Add("other", "ChkSqlite", $g_bUseStatistics ? 1 : 0)
+	IniWrite($g_sBOTConfigPath, "general", "AutoUpdateBOT", $g_bChkAutoUpdateBOT ? 1 : 0) ;AutoUpdateBOT
 
 	_Ini_Add("ProfileSCID", "OnlySCIDAccounts", $g_bOnlySCIDAccounts ? 1 : 0)
 	_Ini_Add("ProfileSCID", "WhatSCIDAccount2Use", $g_iWhatSCIDAccount2Use)

@@ -6,10 +6,10 @@
 ; Return values .: NA
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -472,7 +472,7 @@ Func ReadConfig_600_11()
 		$g_aiCCTroopsExpected[$i] = 0
 	Next
 	For $i = 0 To 2
-		$g_aiClanCastleTroopWaitType[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "cmbClanCastleTroop" & $i, "20"))
+		$g_aiClanCastleTroopWaitType[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "cmbClanCastleTroop" & $i, $eTroopCount))
 		$g_aiClanCastleTroopWaitQty[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "txtClanCastleTroop" & $i, "0"))
 		If $g_aiClanCastleTroopWaitType[$i] < $eTroopCount Then ; barb - iceg
 			$g_aiCCTroopsExpected[$g_aiClanCastleTroopWaitType[$i]] += $g_aiClanCastleTroopWaitQty[$i]
@@ -1250,6 +1250,7 @@ Func ReadConfig_600_35_1()
 	IniReadS($g_bDisableNotifications, $g_sProfileConfigPath, "other", "ChkDisableNotifications", False, "Bool")
 	$g_bForceClanCastleDetection = (IniRead($g_sProfileConfigPath, "other", "ChkFixClanCastle", "0") = "1")
 	IniReadS($g_bUseStatistics, $g_sProfileConfigPath, "other", "ChkSqlite", False, "Bool")
+	$g_bChkAutoUpdateBOT = (IniRead($g_sBOTConfigPath, "general", "AutoUpdateBOT", "0") = "1") ;AutoUpdateBOT
 
 	IniReadS($g_bOnlySCIDAccounts, $g_sProfileConfigPath, "ProfileSCID", "OnlySCIDAccounts", True, "Bool")
 	$g_iWhatSCIDAccount2Use = Int(IniRead($g_sProfileConfigPath, "ProfileSCID", "WhatSCIDAccount2Use", 0))

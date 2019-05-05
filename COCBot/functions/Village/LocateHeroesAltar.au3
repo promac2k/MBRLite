@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........: ProMac 2015
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -85,11 +85,11 @@ Func _LocateQueenAltar()
 		EndIf
 
 		;get Queen info
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If @error Then SetError(0, 0, 0)
 		Local $CountGetInfo = 0
 		While IsArray($sInfo) = False
-			$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+			$sInfo = BuildingInfo(242, 464) ; 860x644
 			If @error Then SetError(0, 0, 0)
 			Sleep(100)
 			$CountGetInfo += 1
@@ -217,11 +217,11 @@ Func _LocateKingAltar()
 		EndIf
 
 		;Get King info
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If @error Then SetError(0, 0, 0)
 		Local $CountGetInfo = 0
 		While IsArray($sInfo) = False
-			$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+			$sInfo = BuildingInfo(242, 464) ; 860x644
 			If @error Then SetError(0, 0, 0)
 			Sleep(100)
 			$CountGetInfo += 1
@@ -354,11 +354,11 @@ Func _LocateWardenAltar()
 		EndIf
 
 		;get GrandWarden info
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< need to work
+		$sInfo = BuildingInfo(242, 464) ; 860x644<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< need to work
 		If @error Then SetError(0, 0, 0)
 		Local $CountGetInfo = 0
 		While IsArray($sInfo) = False
-			$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+			$sInfo = BuildingInfo(242, 464) ; 860x644
 			If @error Then SetError(0, 0, 0)
 			Sleep(100)
 			$CountGetInfo += 1

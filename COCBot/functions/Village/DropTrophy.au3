@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Promac (2015-04), KnowJack(2015-08), Hervidero (2016-01), MonkeyHunter (2016-01,05)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -154,18 +154,7 @@ Func DropTrophy()
 				; Drop a Hero or Troop
 				If $g_bDropTrophyUseHeroes Then
 					;a) identify heroes avaiables...
-					$g_iKingSlot = -1
-					$g_iQueenSlot = -1
-					$g_iWardenSlot = -1
-					For $i = 0 To UBound($g_avAttackTroops) - 1
-						If $g_avAttackTroops[$i][0] = $eKing Then
-							$g_iKingSlot = $i
-						ElseIf $g_avAttackTroops[$i][0] = $eQueen Then
-							$g_iQueenSlot = $i
-						ElseIf $g_avAttackTroops[$i][0] = $eWarden Then
-							$g_iWardenSlot = $i
-						EndIf
-					Next
+					SetSlotSpecialTroops()
 
 					;b) calculate random drop point...
 					$aRandomEdge = $g_aaiEdgeDropPoints[Round(Random(0, 3))]

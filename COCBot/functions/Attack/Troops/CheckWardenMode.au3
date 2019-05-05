@@ -3,10 +3,10 @@
 ; Description ...: Check in which Mode the Warden is from attackbar and switch if needed
 ; Author ........: Fahid.Mahmod (01-2019)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -30,7 +30,10 @@ Func btnTestWardenMode()
 EndFunc   ;==>btnTestWardenMode
 
 Func CheckWardenMode()
-	If Not $g_bCheckWardenMode Or $g_iCheckWardenMode = -1 Then Return
+	If Not $g_bCheckWardenMode Or $g_iCheckWardenMode = -1 Then
+		SetDebugLog("Skipping Warden Mode Check As It's not checked!", $COLOR_INFO)
+		Return
+	EndIf
 	If Number($g_iTownHallLevel) <= 10 Then
 		SetDebugLog("Townhall Lvl " & $g_iTownHallLevel & " Skipping Warden Mode Check!", $COLOR_INFO)
 		Return
@@ -66,7 +69,7 @@ Func SwitchWardenMode($sImgSwitchMode, $aSwitchCords)
 		If _Sleep(250) Then Return
 		SetLog("Switched Grand Warden Mode successfully!", $COLOR_SUCCESS)
 		Click(5, 595 + $g_iBottomOffsetY, 1, 0, "#0111") ;860x780
-		If _Sleep(250) Then Return
+		If _Sleep(750) Then Return
 	Else
 		SetLog("Cannot find the Grand Warden Switch Mode button!", $COLOR_ERROR)
 		Click(5, 595 + $g_iBottomOffsetY, 1, 0, "#0111") ;860x780

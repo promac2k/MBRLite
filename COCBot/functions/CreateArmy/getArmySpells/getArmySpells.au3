@@ -6,10 +6,10 @@
 ; Return values .:
 ; Author ........: Fliegerfaust(11-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -30,6 +30,7 @@ Func getArmySpells($bOpenArmyWindow = False, $bCloseArmyWindow = False, $bCheckW
 		If _Sleep($DELAYCHECKARMYCAMP5) Then Return
 	EndIf
 
+
 	Local $sSpellDiamond = GetDiamondFromRect("23,322,585,356") ; RC Done
 	Local $aCurrentSpells = findMultiple(@ScriptDir & "\imgxml\ArmyOverview\Spells", $sSpellDiamond, $sSpellDiamond, 0, 1000, 0, "objectname,objectpoints", $bNeedCapture) ; Returns $aCurrentSpells[index] = $aArray[2] = ["SpellShortName", CordX,CordY]
 
@@ -47,9 +48,10 @@ Func getArmySpells($bOpenArmyWindow = False, $bCloseArmyWindow = False, $bCheckW
 
 			$iSpellIndex = TroopIndexLookup($aTempSpellArray[0], "getArmySpells()") - $eLSpell ; Get the Index of the Spell from the ShortName
 
-			If $iSpellIndex = -1 Then ContinueLoop
+			If $iSpellIndex < 0 Then ContinueLoop
 
 			$aSpellCoords = StringSplit($aTempSpellArray[1], ",", $STR_NOCOUNT) ; Split the Coordinates where the Spell got found into X and Y
+			If UBound($aSpellCoords) < 2  Then ContinueLoop
 			$g_aiCurrentSpells[$iSpellIndex] = Number(getBarracksNewTroopQuantity(Slot($aSpellCoords[0], $aSpellCoords[1]), 341 + $g_iMidOffsetYNew, $bNeedCapture)) ; RC Done ; Get The Quantity of the Spell, Slot() Does return the exact spot to read the Number from
 
 			$sSpellName = $g_aiCurrentSpells[$iSpellIndex] >= 2 ? $g_asSpellNames[$iSpellIndex] & " Spells" : $g_asSpellNames[$iSpellIndex] & " Spell" ; Select the right Spell Name, If more than one then use Spells at the end

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), KnowJack(July 2015), CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -172,6 +172,7 @@ Func btnStop()
 		; always invoked in MyBot.run.au3!
 		EnableControls($g_hFrmBotBottom, False, $g_aFrmBotBottomCtrlState)
 		$g_bRunState = False ; Exit BotStart()
+		$g_bAttackActive = False
 	EndIf
 	$g_iBotAction = $eBotStop
 EndFunc   ;==>btnStop
@@ -533,7 +534,7 @@ Func _ChkVerificationToken($Reset = False)
 		Local $aToken = StringSplit($sToken, "-", $STR_NOCOUNT)
 		If UBound($aToken) = 5 Then
 			$FirstRun = False
-			If StringLen($aToken[0]) <> 5 Then Setlog("Please check you token! '" & $aToken[0] & "' incorrect format!", $COLOR_SUCCESS)
+			If StringLen($aToken[0]) <> 5 Then Setlog("Please check your token! '" & $aToken[0] & "' incorrect format!", $COLOR_SUCCESS)
 			$g_sTxtRegistrationToken = $sToken
 			Local $Verify = DllCallMyBot("MultibotSearchOpen", "str", $sToken)
 			If IsArray($Verify) Then
@@ -543,6 +544,7 @@ Func _ChkVerificationToken($Reset = False)
 					GUICtrlSetData($g_hLblMember, GetTranslatedFileIni("MBR GUI Design Bottom", "LblMember_Info_01", "Free-Token validated."))
 					GUICtrlSetColor($g_hLblMember, $COLOR_GREEN)
 					_GUICtrlSetImage($g_hPicRegisterNow, $g_sLibIconPath, $eIcn2Arrow)
+					$g_bTokenValidated =  True
 				ElseIf $Verify[0] == "OK-Pro" Then
 					Setlog("Pro Token signing/verification completed!", $COLOR_INFO)
 					$tokenwasverified[0] = True
@@ -550,20 +552,24 @@ Func _ChkVerificationToken($Reset = False)
 					GUICtrlSetData($g_hLblMember, GetTranslatedFileIni("MBR GUI Design Bottom", "LblMember_Info_02", "Pro-Token validated."))
 					GUICtrlSetColor($g_hLblMember, $COLOR_SUCCESS)
 					_GUICtrlSetImage($g_hPicRegisterNow, $g_sLibIconPath, $eIcn2Arrow)
+					$g_bTokenValidated =  True
 				Else
 					Setlog($Verify[0], $COLOR_ERROR)
+					$g_bTokenValidated =  False
 				EndIf
 			Else
 				Setlog("Token signing/verification failed!", $COLOR_ERROR)
 				GUICtrlSetData($g_hLblMember, GetTranslatedFileIni("MBR GUI Design Bottom", "LblMember_Info_03", "Please use a valid token!"))
 				GUICtrlSetColor($g_hLblMember, $COLOR_RED)
 				_GUICtrlSetImage($g_hPicRegisterNow, $g_sLibIconPath, $eIcnRegisterNow)
+				$g_bTokenValidated =  False
 			EndIf
 		Else
 			setlog("Please use a valid token!", $COLOR_ERROR)
 			GUICtrlSetData($g_hLblMember, GetTranslatedFileIni("MBR GUI Design Bottom", "LblMember_Info_03", "Please use a valid token!"))
 			GUICtrlSetColor($g_hLblMember, $COLOR_RED)
 			_GUICtrlSetImage($g_hPicRegisterNow, $g_sLibIconPath, $eIcnRegisterNow)
+			$g_bTokenValidated =  False
 		EndIf
 	EndIf
 
@@ -580,3 +586,4 @@ Func _ChkVerificationToken($Reset = False)
 	SetDebugLog("ChkVerificationToken ends")
 	Return $tokenwasverified
 EndFunc   ;==>_ChkVerificationToken
+

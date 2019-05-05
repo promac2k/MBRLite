@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -33,10 +33,10 @@ Func TestBuilderBaseZoomOut()
 	Setlog("** TestBuilderBaseZoomOutOnAttack END**", $COLOR_DEBUG)
 EndFunc   ;==>TestBuilderBaseZoomOut
 
-Func BuilderBaseZoomOut($DebugImage = False)
+Func BuilderBaseZoomOut($DebugImage = False, $ForceZoom = False)
 
 	Local $Size = GetBuilderBaseSize(False, $DebugImage) ; WihtoutClicks
-	If $Size > 520 And $Size < 590 Then
+	If $Size > 520 And $Size < 590 and Not $ForceZoom Then
 		SetDebugLog("BuilderBaseZoomOut check!")
 		Return True
 	EndIf

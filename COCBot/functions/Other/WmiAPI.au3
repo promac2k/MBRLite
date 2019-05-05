@@ -6,10 +6,10 @@
 ; Return values .: Array containing array of fields
 ; Author ........: cosote
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -21,7 +21,7 @@ Global Static $g_WmiFields = ["Handle", "ExecutablePath", "CommandLine"]
 
 Func GetWmiSelectFields()
 	Return _ArrayToString($g_WmiFields, ",")
-EndFunc
+EndFunc   ;==>GetWmiSelectFields
 
 Func GetWmiObject()
 	; Win32_Process: https://msdn.microsoft.com/en-us/library/windows/desktop/aa394372(v=vs.85).aspx
@@ -40,9 +40,9 @@ Func WmiQuery($sQuery)
 		Local $sAppFile = @ScriptDir & "\MultiBot.run.Wmi." & ((@Compiled) ? ("exe") : ("au3"))
 		If FileExists($sAppFile) Then
 			Local $process_killed
-			Local $cmd = """" & $sAppFile & """"
-			If @Compiled = 0 Then $cmd = """" & @AutoItExe & """ /AutoIt3ExecuteScript """ & $sAppFile & """"
-			Local $s = LaunchConsole($cmd, """" & $sQuery & """", $process_killed)
+			Local $cmd = DoubleQuote($sAppFile)
+			If @Compiled = 0 Then $cmd = DoubleQuote(@AutoItExe) & " /AutoIt3ExecuteScript " & DoubleQuote($sAppFile)
+			Local $s = LaunchConsole($cmd, DoubleQuote($sQuery), $process_killed)
 			Return WmiOutputToArray($s)
 		EndIf
 		; fall back to internal WMI call
@@ -51,7 +51,7 @@ Func WmiQuery($sQuery)
 	Local $aProcesses[0]
 	SetDebugLog("WMI Query: " & $sQuery)
 	Local $oObjc = GetWmiObject()
-	If $oObjc = -1 Or @error Then  Return 0
+	If $oObjc = -1 Or @error Then Return 0
 	Local $oProcessColl = $oObjc.ExecQuery($sQuery, "WQL", 0x20 + 0x10)
 	For $Process In $oProcessColl
 		Local $aProcess[UBound($g_WmiFields)]
@@ -62,7 +62,7 @@ Func WmiQuery($sQuery)
 		$aProcesses[UBound($aProcesses) - 1] = $aProcess
 	Next
 	Return $aProcesses
-EndFunc
+EndFunc   ;==>WmiQuery
 
 Func WmiOutputToArray(ByRef $s)
 
@@ -90,16 +90,16 @@ Func WmiOutputToArray(ByRef $s)
 
 	Return $aProcesses
 
-EndFunc
+EndFunc   ;==>WmiOutputToArray
 
 Func StringBetween(ByRef $s, $sStartTag, $sEndTag, $iStartPos = 1)
-    Local $iS = StringInStr($s, $sStartTag, 0, 1, $iStartPos)
-    If $iS > 0 Then
+	Local $iS = StringInStr($s, $sStartTag, 0, 1, $iStartPos)
+	If $iS > 0 Then
 		$iS += StringLen($sStartTag)
-        Local $iE = StringInStr($s, $sEndTag, 0, 1, $iS)
-        If $iE > 0 Then
+		Local $iE = StringInStr($s, $sEndTag, 0, 1, $iS)
+		If $iE > 0 Then
 			Return SetError(0, $iE + StringLen($sEndTag), StringMid($s, $iS, $iE - $iS))
-        EndIf
-    EndIf
+		EndIf
+	EndIf
 	Return SetError(1, 0, "")
-EndFunc
+EndFunc   ;==>StringBetween

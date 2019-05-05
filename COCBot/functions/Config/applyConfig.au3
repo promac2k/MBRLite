@@ -6,10 +6,10 @@
 ; Return values .: NA
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -2059,9 +2059,6 @@ Func ApplyConfig_600_35_1($TypeReadSave)
 			GUICtrlSetState($g_hChkDeleteTemp, $g_bDeleteTemp ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtDeleteTempDays, $g_iDeleteTempDays)
 			chkDeleteTemp()
-			GUICtrlSetState($g_hChkDeleteLoots, $g_bDeleteLoots ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_hTxtDeleteLootsDays, $g_iDeleteLootsDays)
-			chkDeleteLoots()
 			GUICtrlSetState($g_hChkAutostart, $g_bAutoStart ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtAutostartDelay, $g_iAutoStartDelay)
 			chkAutoStart()
@@ -2090,6 +2087,7 @@ Func ApplyConfig_600_35_1($TypeReadSave)
 			GUICtrlSetState($g_hChkDisableNotifications, $g_bDisableNotifications ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkFixClanCastle, $g_bForceClanCastleDetection ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkSqlite, $g_bUseStatistics ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkAutoUpdateBOT, $g_bChkAutoUpdateBOT ? $GUI_CHECKED : $GUI_UNCHECKED) ;AutoUpdateBOT
 
 			GUICtrlSetState($g_hChkOnlySCIDAccounts, $g_bOnlySCIDAccounts ? $GUI_CHECKED : $GUI_UNCHECKED)
 			_GUICtrlComboBox_SetCurSel($g_hCmbWhatSCIDAccount2Use, $g_iWhatSCIDAccount2Use)
@@ -2101,8 +2099,6 @@ Func ApplyConfig_600_35_1($TypeReadSave)
 			$g_iDeleteLogsDays = GUICtrlRead($g_hTxtDeleteLogsDays)
 			$g_bDeleteTemp = (GUICtrlRead($g_hChkDeleteTemp) = $GUI_CHECKED)
 			$g_iDeleteTempDays = GUICtrlRead($g_hTxtDeleteTempDays)
-			$g_bDeleteLoots = (GUICtrlRead($g_hChkDeleteLoots) = $GUI_CHECKED)
-			$g_iDeleteLootsDays = GUICtrlRead($g_hTxtDeleteLootsDays)
 			$g_bAutoStart = (GUICtrlRead($g_hChkAutostart) = $GUI_CHECKED)
 			$g_iAutoStartDelay = GUICtrlRead($g_hTxtAutostartDelay)
 			$g_bCheckGameLanguage = (GUICtrlRead($g_hChkCheckGameLanguage) = $GUI_CHECKED)
@@ -2127,7 +2123,8 @@ Func ApplyConfig_600_35_1($TypeReadSave)
 			$g_bDisableNotifications = (GUICtrlRead($g_hChkDisableNotifications) = $GUI_CHECKED)
 			$g_bForceClanCastleDetection = (GUICtrlRead($g_hChkFixClanCastle) = $GUI_CHECKED)
 			$g_bUseStatistics = (GUICtrlRead($g_hChkSqlite) = $GUI_CHECKED)
-
+			$g_bChkAutoUpdateBOT = (GUICtrlRead($g_hChkAutoUpdateBOT) = $GUI_CHECKED) ;AutoUpdateBOT
+		
 			$g_bOnlySCIDAccounts = (GUICtrlRead($g_hChkOnlySCIDAccounts) = $GUI_CHECKED)
 			$g_iWhatSCIDAccount2Use = _GUICtrlComboBox_GetCurSel($g_hCmbWhatSCIDAccount2Use)
 	EndSwitch

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -25,7 +25,7 @@ Global $g_hBtnTestVillageSize = 0, $g_hBtnTestDeadBase = 0, $g_hBtnTestTHimgloc 
 Global $g_hBtnTestFindButton = 0, $g_hBtnTestDeadBaseFolder = 0, $g_hBtnTestCleanYard = 0, $g_hBtnTestAttackCSV = 0, $g_hBtnTestBuildingLocation = 0, $g_hBtnTestArmyWindow = 0
 Global $g_hBtnTestConfigSave = 0, $g_hBtnTestConfigApply = 0, $g_hBtnTestConfigRead = 0, $g_hBtnTestOcrMemory = 0, $g_hBtnTestWeakBase = 0, $g_hBtnTestClickAway = 0, $g_hBtnTestAutoUpgrade = 0
 Global $g_hBtnTestUpgradeWindow = 0, $g_hBtnTestSmartWait = 0, $g_hBtnConsoleWindow = 0,$g_hBtnTestZoomout = 0, $g_hBtnTestVillagePolygon = 0 , $g_hBtnTestVillageRedlines = 0
-Global $g_hBtnTestWardenMode = 0, $g_hBtnTestSwitchSiegeMachines = 0, $g_hBtnTestRearm = 0
+Global $g_hBtnTestWardenMode = 0, $g_hBtnTestSwitchSiegeMachines = 0
 
 Func CreateBotDebug()
 
@@ -179,11 +179,11 @@ Func CreateBotDebug()
 		$g_hTxtTestFindButton = GUICtrlCreateInput("BoostOne", $x - ($BtnSizeW + 5), $y + 1, 85, 20)
 		$g_hBtnTestFindButton = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "TestFindButton", "Test Find Button"), $x , $y, $BtnSizeW, $BtnSizeH)
 	$y -= $yNext
-		$g_hBtnTestRearm = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestRearm", "Test Rearm/Tomb"), $x - ($BtnSizeW + 5), $y + 1, 85, 20)
+		$g_hBtnTestArmyWindow = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestArmyWindow", "Army Overview"), $x - ($BtnSizeW + 5), $y, 85, 20)
 		$g_hBtnTestDeadBaseFolder = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestDeadBaseFolder", "Test DB Folder"), $x , $y, $BtnSizeW, $BtnSizeH)
 
 	$y -= $yNext
-		$g_hBtnTestArmyWindow = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestArmyWindow", "Army Overview"), $x - ($BtnSizeW + 5), $y, $BtnSizeW, $BtnSizeH)
+		
 		$g_hBtnTestAttackCSV = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestAttackCSV", "CSV Test"), $x , $y, $BtnSizeW, $BtnSizeH)
 		GUICtrlSetColor($g_hBtnTestAttackCSV, 0xFF0000) ; Multibot RC Debug Buttons
 	$y -= $yNext

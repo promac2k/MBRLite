@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: CodeSlinger69 (2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -77,17 +77,17 @@ Func CreateAboutTab()
 			"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even " & @CRLF & _
 			"the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General " & @CRLF & _
 			"Public License for more details. The license can be found in the main code folder location." & @CRLF & _
-			"Copyright (C) 2015-2018 MultiBot.run"
+			"Copyright (C) 2015-2019 MultiBot.run"
 	GUICtrlCreateLabel($sText, $x + 1, $y, 415, 56, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT, $ES_CENTER), 0)
 	GUICtrlSetColor(-1, 0x000053)
 	GUICtrlSetFont(-1, 6.5, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 
 	$y += 75
 	GUICtrlCreateGroup("MULTIBOT " & GetTranslatedFileIni("MBR GUI Design About", "Group_01", " - MEMBER"), $x - 5, $y + 56 + 20, 435, 50)
-		$g_hTxtRegistrationToken = GUICtrlCreateInput(GetTranslatedFileIni("MBR GUI Design Bottom", "LblRegistrationToken", "Enter Reg. Token"), $x, $y + 56 + 40, 155, 20)
+		$g_hTxtRegistrationToken = GUICtrlCreateInput("", $x, $y + 56 + 40, 155, 20)
 			GUICtrlSetFont(-1, 6.5, $FW_THIN, Default, "Arial", $CLEARTYPE_QUALITY)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblRegistrationToken_Info_01", "https://multibot.run/free-register | You need to be a 'Silver Member' to use Builder Base attack."))
-
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblRegistrationToken_Info_01", "https://multibot.run/free-register | You need to have a 'PRO token' to use Builder Base attack."))
+			
 		$g_hBtnVerifyToken = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "LblVerifyToken", "Check"), $x + 160, $y + 56 + 39 , 50, 21)
 			GUICtrlSetColor(-1, $COLOR_RED)
 			GUICtrlSetOnEvent(-1, "ChkVerificationToken")

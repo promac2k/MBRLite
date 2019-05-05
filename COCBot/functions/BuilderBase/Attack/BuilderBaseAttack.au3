@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -427,30 +427,33 @@ Func BuilderBaseAttackReport()
 	If _sleep(5000) Then Return
 
 	; Get the LOOT :
-	Local $gain[3]
 	; To get trophies getOcrOverAllDamage(493, 480 + $g_iMidOffsetYNew) ; RC Done
-	$gain[$eLootTrophyBB] = Int(getOcrOverAllDamage(493, 480 + $g_iMidOffsetYNew)) ; RC Done
-	$gain[$eLootGoldBB] = Int(getTrophyVillageSearch(150, 483 + $g_iMidOffsetYNew)) ; RC Done
-	$gain[$eLootElixirBB] = Int(getTrophyVillageSearch(310, 483 + $g_iMidOffsetYNew)) ; RC Done
+	$g_iStatsBBBonusLast[$eLootTrophyBB] = Int(getOcrOverAllDamage(493, 480 + $g_iMidOffsetYNew)) ; RC Done
+	$g_iStatsBBBonusLast[$eLootGoldBB] = Int(getTrophyVillageSearch(150, 483 + $g_iMidOffsetYNew)) ; RC Done
+	$g_iStatsBBBonusLast[$eLootElixirBB] = Int(getTrophyVillageSearch(310, 483 + $g_iMidOffsetYNew)) ; RC Done
 	Local $iLastDamage = Int(_getTroopCountBig(222, 304 + $g_iMidOffsetYNew)) ; RC Done
 	If $iLastDamage > $g_iLastDamage Then $g_iLastDamage = $iLastDamage
+	$g_iStatsBBBonusLast[3] = $g_iLastDamage
 
 	If StringInStr($ResultName, "Victory") > 0 Then
-		$gain[$eLootTrophyBB] = Abs($gain[$eLootTrophyBB])
+		$g_iStatsBBBonusLast[$eLootTrophyBB] = Abs($g_iStatsBBBonusLast[$eLootTrophyBB])
 	Else
-		$gain[$eLootTrophyBB] = $gain[$eLootTrophyBB] * -1
+		$g_iStatsBBBonusLast[$eLootTrophyBB] = $g_iStatsBBBonusLast[$eLootTrophyBB] * -1
 	EndIf
+
+	; Notify
+	PushMsg("LastRaidBB")
 
 	; #######################################################################
 	; Just a temp log for BB attacks , this needs a new TAB like a stats tab
 	Local $AtkLogTxt
 	$AtkLogTxt = "  " & String($g_iCurAccount + 1) & "|" & _NowTime(4) & "|"
 	$AtkLogTxt &= StringFormat("%5d", $g_aiCurrentLootBB[$eLootTrophyBB]) & "|"
-	$AtkLogTxt &= StringFormat("%7d", $gain[$eLootGoldBB]) & "|"
-	$AtkLogTxt &= StringFormat("%7d", $gain[$eLootElixirBB]) & "|"
-	$AtkLogTxt &= StringFormat("%3d", $gain[$eLootTrophyBB]) & "|"
+	$AtkLogTxt &= StringFormat("%7d", $g_iStatsBBBonusLast[$eLootGoldBB]) & "|"
+	$AtkLogTxt &= StringFormat("%7d", $g_iStatsBBBonusLast[$eLootElixirBB]) & "|"
+	$AtkLogTxt &= StringFormat("%3d", $g_iStatsBBBonusLast[$eLootTrophyBB]) & "|"
 	$AtkLogTxt &= StringFormat("%1d", $Stars) & "|"
-	$AtkLogTxt &= StringFormat("%3d", $g_iLastDamage) & "|"
+	$AtkLogTxt &= StringFormat("%3d", $g_iStatsBBBonusLast[3]) & "|"
 	$AtkLogTxt &= StringFormat("%1d", $g_iBuilderBaseScript + 1) & "|"
 
 	If StringInStr($ResultName, "Victory") > 0 Then

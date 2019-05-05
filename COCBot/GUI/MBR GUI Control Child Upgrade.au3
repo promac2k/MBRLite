@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -390,6 +390,8 @@ Func ChkBBWalls()
 		$g_bChkBBUpgradeWalls = True
 		GUICtrlSetState($g_hLblBBWallLevelInfo, $GUI_ENABLE)
 		GUICtrlSetState($g_hCmbBBWallLevel, $GUI_ENABLE)
+		GUICtrlSetState($g_hLblBBWallCostInfo, $GUI_ENABLE)
+		GUICtrlSetState($g_hLblBBWallCost, $GUI_ENABLE)
 		GUICtrlSetState($g_hPicBBWallUpgrade, $GUI_SHOW)
 		GUICtrlSetState($g_hTxtBBWallNumber, $GUI_SHOW)
 		GUICtrlSetState($g_hLblBBWallNumberInfo, $GUI_SHOW)
@@ -397,6 +399,8 @@ Func ChkBBWalls()
 		$g_bChkBBUpgradeWalls = False
 		GUICtrlSetState($g_hLblBBWallLevelInfo, $GUI_DISABLE)
 		GUICtrlSetState($g_hCmbBBWallLevel, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblBBWallCostInfo, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblBBWallCost, $GUI_DISABLE)
 		GUICtrlSetState($g_hPicBBWallUpgrade, $GUI_HIDE)
 		GUICtrlSetState($g_hTxtBBWallNumber, $GUI_HIDE)
 		GUICtrlSetState($g_hLblBBWallNumberInfo, $GUI_HIDE)
@@ -405,5 +409,7 @@ EndFunc ;==>ChkBBWalls
 
 Func cmbBBWall()
 	$g_iCmbBBWallLevel = _GUICtrlComboBox_GetCurSel($g_hCmbBBWallLevel)
+	; Wall search level, 0 is not a level , this is the selected level to upgrade
+	GUICtrlSetData($g_hLblBBWallCost, _NumberFormat($g_aiWallBBInfoPerLevel[$g_iCmbBBWallLevel + 2][1]))
 	_GUICtrlSetImage($g_hPicBBWallUpgrade, $g_sLibBBIconPath, $g_iCmbBBWallLevel + 19)
 EndFunc   ;==>cmbBBWall

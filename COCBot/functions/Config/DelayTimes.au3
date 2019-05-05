@@ -4,10 +4,10 @@
 ; Syntax ........: $iDelayXXXXXXYYY  : XXXX = function name using the delay, YYY = delay value or position of delay in file
 ; Author ........: Sardo (08-2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -56,6 +56,7 @@ Global Const $DELAYDROPCC2 = 500 ;click
 ;dropHeroes
 Global Const $DELAYDROPHEROES1 = 300
 Global Const $DELAYDROPHEROES2 = 500
+Global Const $DELAYHEROESHEALTHCHECK = 3000
 
 ;GoldElixirChange
 Global Const $DELAYGOLDELIXIRCHANGE1 = 500
@@ -268,12 +269,6 @@ Global Const $DELAYNOTIFY1 = 500
 Global Const $DELAYPUSHMSG1 = 500
 Global Const $DELAYPUSHMSG2 = 1000
 
-;ReArm
-Global Const $DELAYREARM1 = 500
-Global Const $DELAYREARM2 = 1500
-Global Const $DELAYREARM3 = 700
-Global Const $DELAYREARM4 = 200
-
 ;Treasury
 Global Const $DELAYTREASURY1 = 500
 Global Const $DELAYTREASURY2 = 1500
@@ -348,6 +343,7 @@ Global Const $DELAYCHECKIMAGETYPE1 = 100
 ;SpecialButtonClick = ClickOkay(), ClickRemove()
 Global Const $DELAYSPECIALCLICK1 = 200
 Global Const $DELAYSPECIALCLICK2 = 100
+Global Const $DELAYSPECIALCLICK3 = 500
 
 ;AttackCSV
 Global Const $iDelayAttackCSV1 = $DELAYVILLAGESEARCH5

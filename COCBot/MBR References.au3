@@ -186,6 +186,10 @@ Func ReferenceFunctions()
 	getChatStringChinese(0, 0)
 	getChatStringKorean(0, 0)
 	getChatStringPersian(0, 0)
+
+	DoubleQuote(0)
+
+	MBR_INI(0, 0, 0)
 EndFunc   ;==>ReferenceFunctions
 
 Func ReferenceGlobals()
@@ -564,4 +568,5 @@ Func ReferenceGlobals()
 
 	$a1 = $eIcnClanGames
 
+	$a1 = $FORWARD_SLASH
 EndFunc   ;==>ReferenceGlobals

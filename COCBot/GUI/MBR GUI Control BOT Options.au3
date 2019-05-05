@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: MyBot.run Team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -72,6 +72,15 @@ Func cmbLanguage()
 	RestartBot(False, False)
 EndFunc   ;==>cmbLanguage
 
+Func chkVersion()
+	If GUICtrlRead($g_hChkForMBRUpdates) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkAutoUpdateBOT, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkAutoUpdateBOT, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkAutoUpdateBOT, $GUI_UNCHECKED)
+	EndIf
+EndFunc   ;==>chkVersion
+
 Func chkBotCustomTitleBarClick()
 	Local $bChecked = GUICtrlRead($g_hChkBotCustomTitleBarClick) = $GUI_CHECKED
 	$g_iBotDesignFlags = BitOR(BitAND($g_iBotDesignFlags, BitNOT(1)), (($bChecked) ? 1 : 0))
@@ -118,10 +127,6 @@ EndFunc   ;==>chkDeleteLogs
 Func chkDeleteTemp()
 	GUICtrlSetState($g_hTxtDeleteTempDays, GUICtrlRead($g_hChkDeleteTemp) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
 EndFunc   ;==>chkDeleteTemp
-
-Func chkDeleteLoots()
-	GUICtrlSetState($g_hTxtDeleteLootsDays, GUICtrlRead($g_hChkDeleteLoots) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
-EndFunc   ;==>chkDeleteLoots
 
 Func chkAutoStart()
 	GUICtrlSetState($g_hTxtAutostartDelay, GUICtrlRead($g_hChkAutoStart) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
@@ -729,7 +734,7 @@ Func btnTestVillageSize()
 
 	Local $a[2][2] = [["stone", "tree"], ["2stone", "2tree"]]
 	For $i = 0 To 1
-		SetLog("Testing GetVillageSize(True, """ & $a[$i][0] & """, """ & $a[$i][1] & """)", $COLOR_INFO)
+		SetLog("Testing GetVillageSize(True, " & DoubleQuote($a[$i][0]) & ", " & DoubleQuote($a[$i][1]) & ")", $COLOR_INFO)
 		Local $hTimer = __TimerInit()
 		Local $village = GetVillageSize(True, $a[$i][0], $a[$i][1])
 		Local $ms = __TimerDiff($hTimer)
@@ -1074,12 +1079,12 @@ Func btnTestFindButton()
 	BeginImageTest()
 	Local $result
 	Local $sButton = GUICtrlRead($g_hTxtTestFindButton)
-	SetLog("Testing findButton(""" & $sButton & """)", $COLOR_INFO)
+	SetLog("Testing findButton(" & DoubleQuote($sButton) & ")", $COLOR_INFO)
 	$result = findButton($sButton)
 	$result = ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
 	If @error Then $result = "Error " & @error & ", " & @extended & ", "
-	SetLog("Result findButton(""" & $sButton & """) = " & $result, $COLOR_INFO)
-	SetLog("Testing findButton(""" & $sButton & """) DONE", $COLOR_INFO)
+	SetLog("Result findButton(" & DoubleQuote($sButton) & ") = " & $result, $COLOR_INFO)
+	SetLog("Testing findButton(" & DoubleQuote($sButton) & ") DONE", $COLOR_INFO)
 	EndImageTest()
 EndFunc   ;==>btnTestFindButton
 
@@ -1447,7 +1452,7 @@ Func btnTestWeakBase()
 	Local $currentRunState = $g_bRunState
 	$g_bRunState = True
 	BeginImageTest()
-	IsWeakBase(12, "" , True)
+	IsWeakBase(12, "", True)
 	EndImageTest()
 	$g_bRunState = $currentRunState
 EndFunc   ;==>btnTestWeakBase
@@ -1514,7 +1519,7 @@ Func btnTestZoomout()
 	BeginImageTest()
 	ZoomOut()
 	;SearchZoomOut($CenterVillageBoolOrScrollPos = $aCenterHomeVillageClickDrag, $UpdateMyVillage = True, $sSource = "", $CaptureRegion = True, $DebugLog = False)
-	SearchZoomOut(False, True, "Test", False, true)
+	SearchZoomOut(False, True, "Test", False, True)
 	EndImageTest()
 	SetLog("End Test Zoomout")
 

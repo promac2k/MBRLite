@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -26,7 +26,7 @@
 ; Zone to search for Gold / Elixir icons and values [445, 100, 90, 85 ]
 ; Gold offset for OCR [Point] [x,y, length]  ,x = x , y = - 10  , length = 535 - x , Height = y + 7   [17]
 ; Elixir offset for OCR [Point] [x,y, length]  ,x = x , y = - 10  , length = 535 - x , Height = y + 7 [17]
-; Builder Name OCR ::::: BuildingInfo(242, 580)
+; Builder Name OCR ::::: BuildingInfo(242, 464)
 ; Button Upgrade position [275, 670, 300, 30]  -> UpgradeButton_0_89.png
 ; Button OK position Check Pixel [430, 540, 0x6dbd1d, 10] and CLICK
 
@@ -280,7 +280,7 @@ Func GetUpgradeButton($sUpgButtom = "", $Debug = False)
 	If $sUpgButtom = "Gold" Then $sUpgButtom = $g_sImgAutoUpgradeBtnGold
 
 	If QuickMIS("BC1", $g_sImgAutoUpgradeBtnDir, 300, 650 + $g_iBottomOffsetYNew, 600, 720 + $g_iBottomOffsetYNew, True, $Debug) Then
-		Local $sBuildingName = getNameBuilding(242, 520 + $g_iBottomOffsetY)
+		Local $sBuildingName = getNameBuilding(242, 464)
 		If _Sleep(500) Then Return
 		SetLog("Building: " & $sBuildingName, $COLOR_INFO)
 		; Verify if is Builder Hall and If is to Upgrade

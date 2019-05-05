@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Boju(2016)
 ; Modified ......: MR.ViPER (11-2016), CodeSlinger69 (2017), MMHK (01-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -281,7 +281,6 @@ Func InitializeControlVariables()
 	$oAlwaysEnabledControls($g_hBtnTestClickAway) = 1
 	$oAlwaysEnabledControls($g_hBtnTestArmyWindow) = 1
 	$oAlwaysEnabledControls($g_hBtnTestSwitchSiegeMachines) = 1
-	$oAlwaysEnabledControls($g_hBtnTestRearm) = 1
 	$oAlwaysEnabledControls($g_hBtnTestWardenMode) = 1
 
 

@@ -13,10 +13,10 @@
 ;                           6 : Android elapsed time is <= 0
 ; Author ........: Cosote (03-2016)
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2016-2018
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: If CheckAndroidTimeLag() = True Then Return
 ; ===============================================================================================================================
 #include-once

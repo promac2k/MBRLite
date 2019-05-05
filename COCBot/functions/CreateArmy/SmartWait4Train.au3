@@ -7,15 +7,17 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (05-2016)
 ; Modified ......: MR.ViPER (10-2016), TheRevenor (10-2016), MR.ViPER (12-2016), CodeSlinger69 (01-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
 
 Func SmartWait4Train($iTestSeconds = Default)
+	If Not $g_bRunState Then Return
+	
 	Static $ichkCloseWaitSpell = 0, $ichkCloseWaitHero = 0
 	Local $bTest = ($iTestSeconds <> Default)
 
@@ -62,7 +64,7 @@ Func SmartWait4Train($iTestSeconds = Default)
 
 	; Determine what wait mode(s) are enabled
 	If IsArray($g_asShieldStatus) And (StringInStr($g_asShieldStatus[0], "shield", $STR_NOCASESENSEBASIC) Or StringInStr($g_asShieldStatus[0], "guard", $STR_NOCASESENSEBASIC)) Then
-		If $g_bDebugSetlogTrain Or $g_bDebugSetlog Then SetLog("Have shield till " & $g_asShieldStatus[2] & ", close game while wait for train)", $COLOR_DEBUG)
+		If $g_bDebugSetlogTrain Or $g_bDebugSetlog Then SetLog("Have shield till " & $g_asShieldStatus[2] & ", close game while wait for train", $COLOR_DEBUG)
 		$iTrainWaitCloseFlag = BitOR($iTrainWaitCloseFlag, $TRAINWAIT_SHIELD) ; close if we have a shield
 	EndIf
 	If _Sleep($DELAYRESPOND) Then Return
@@ -77,7 +79,7 @@ Func SmartWait4Train($iTestSeconds = Default)
 			$g_asShieldStatus = $aResult ; Update new values
 		EndIf
 		If IsArray($g_asShieldStatus) And (StringInStr($g_asShieldStatus[0], "shield", $STR_NOCASESENSEBASIC) Or StringInStr($g_asShieldStatus[0], "guard", $STR_NOCASESENSEBASIC)) Then ; check shield after update
-			If $g_bDebugSetlogTrain Or $g_bDebugSetlog Then SetLog("Have shield till " & $g_asShieldStatus[2] & ", close game while wait for train)", $COLOR_DEBUG)
+			If $g_bDebugSetlogTrain Or $g_bDebugSetlog Then SetLog("Have shield till " & $g_asShieldStatus[2] & ", close game while wait for train", $COLOR_DEBUG)
 			$iTrainWaitCloseFlag = BitOR($iTrainWaitCloseFlag, $TRAINWAIT_SHIELD)
 		EndIf
 	EndIf

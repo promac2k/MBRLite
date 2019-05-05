@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -40,13 +40,13 @@ Func CheckArmyBuilderBase($test = False)
 	Setlog("Entering in Camps!", $COLOR_PURPLE)
 
 	; Check the Train Button
-	If Not _ColorCheck(_GetPixelColor($aArmyTrainButtonBB[0], $aArmyTrainButtonBB[1], True), _
-			Hex($aArmyTrainButtonBB[2], 6), $aArmyTrainButtonBB[3]) Then Return
+	If Not _ColorCheck(_GetPixelColor($g_aArmyTrainButtonBB[0], $g_aArmyTrainButtonBB[1], True), _
+			Hex($g_aArmyTrainButtonBB[2], 6), $g_aArmyTrainButtonBB[3]) Then Return
 
 	SetDebugLog("** Check the Train Button Detected**", $COLOR_DEBUG)
 
 	; Click on that Button
-	Click($aArmyTrainButtonBB[0], $aArmyTrainButtonBB[1], 1)
+	Click($g_aArmyTrainButtonBB[0], $g_aArmyTrainButtonBB[1], 1)
 
 	; Wait for Window
 	If Not _WaitForCheckXML($g_sImgPathFillArmyCampsWindow, "185,90,455,50", True, 10000, 100) Then ; RC Done

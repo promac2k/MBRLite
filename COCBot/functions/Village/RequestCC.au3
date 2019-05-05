@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo(06-2015), KnowJack(10-2015), Sardo (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -24,7 +24,7 @@ Func IsToRequestCC($ClickPAtEnd = True, $bSetLog = False, $bNeedCapture = True)
 			$aCCRequestCoords = StringSplit($aTempCCRequestArray[1], ",", $STR_NOCOUNT) ; Split the Coordinates where the Button got found into X and Y
 
 			If $g_bDebugSetlog Then
-				SetDebugLog($aTempCCRequestArray[0] & "Found on Coord: (" & $aCCRequestCoords[0] & "," & $aCCRequestCoords[1])
+				SetDebugLog($aTempCCRequestArray[0] & " Found on Coord: (" & $aCCRequestCoords[0] & "," & $aCCRequestCoords[1] & ")")
 			EndIf
 
 			If $aTempCCRequestArray[0] = "RequestFilled" Then ; Clan Castle Full
@@ -251,7 +251,7 @@ Func CheckCCArmy()
 	Local $bCCSpellFull = False
 
 	If Not $g_bRunState Then Return
-	If $g_abRequestType[1] And $g_iClanCastleSpellsWaitFirst > 0 And $g_iCurrentCCSpells > 0 And $g_iTotalCCSpells > 0 Then
+	If $g_abRequestType[1] And $g_iClanCastleSpellsWaitFirst > 0 And $g_iCurrentCCSpells = $g_iTotalCCSpells And $g_iTotalCCSpells > 0 Then
 		If $g_bDebugSetlog Then SetLog("Getting current available spell in Clan Castle.")
 		; Imgloc Detection
 		If $g_iTotalCCSpells >= 1 Then $sCurCCSpell1 = GetCurCCSpell(1)

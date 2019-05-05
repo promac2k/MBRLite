@@ -3,11 +3,11 @@
 ; Description ...: Register Windows Message and provides functions to communicate between bots and manage bot application
 ; Author ........: cosote (12-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ;                  Read/write memory: https://www.autoitscript.com/forum/topic/104117-shared-memory-variables-demo/
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -218,8 +218,8 @@ Func LaunchWatchdog()
 		Return 0
 	EndIf
 	ReleaseMutex($hMutex)
-	Local $cmd = """" & @ScriptDir & "\MultiBot.run.Watchdog.exe"""
-	If @Compiled = 0 Then $cmd = """" & @AutoItExe & """ /AutoIt3ExecuteScript """ & @ScriptDir & "\MultiBot.run.Watchdog.au3" & """"
+	Local $cmd = DoubleQuote(@ScriptDir & "\MultiBot.run.Watchdog.exe")
+	If @Compiled = 0 Then $cmd = DoubleQuote(@AutoItExe) & " /AutoIt3ExecuteScript " & DoubleQuote(@ScriptDir & "\MultiBot.run.Watchdog.au3")
 	If $g_iBotLaunchOption_Console Then $cmd &= " /console"
 	Local $pid = Run($cmd, @ScriptDir)
 	If $pid = 0 Then

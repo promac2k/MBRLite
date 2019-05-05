@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Fahid.Mahmood(12-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func PrepareAttack($pMatchMode, $Remaining = False, $DebugSiege = False) ;Assigns troops
@@ -29,9 +29,9 @@ Func PrepareAttack($pMatchMode, $Remaining = False, $DebugSiege = False) ;Assign
 		$g_bDropKing = False ; reset hero dropped flags
 		$g_bDropQueen = False
 		$g_bDropWarden = False
-		If $g_iActivateKing = 1 Or $g_iActivateKing = 2 Then $g_aHeroesTimerActivation[$eHeroBarbarianKing] = 0
-		If $g_iActivateQueen = 1 Or $g_iActivateQueen = 2 Then $g_aHeroesTimerActivation[$eHeroArcherQueen] = 0
-		If $g_iActivateWarden = 1 Or $g_iActivateWarden = 2 Then $g_aHeroesTimerActivation[$eHeroGrandWarden] = 0
+		$g_aHeroesTimerActivation[$eHeroBarbarianKing] = 0
+		$g_aHeroesTimerActivation[$eHeroArcherQueen] = 0
+		$g_aHeroesTimerActivation[$eHeroGrandWarden] = 0
 
 		$g_iTotalAttackSlot = 10 ; reset flag - Slot11+
 		$g_bDraggedAttackBar = False
@@ -43,8 +43,10 @@ Func PrepareAttack($pMatchMode, $Remaining = False, $DebugSiege = False) ;Assign
 		SetLog("Checking remaining unused troops for: " & $g_asModeText[$pMatchMode], $COLOR_INFO)
 	Else
 		SetLog("Initiating attack for: " & $g_asModeText[$pMatchMode], $COLOR_ERROR)
-		If IsSpecialTroopToBeUsed($pMatchMode, $eHeroWarden) Then ;Check If Warden Is Selected To Drop Only Then Check His Mode
+		If IsSpecialTroopToBeUsed($pMatchMode, $eWarden) Then ;Check If Warden Is Selected To Drop Only Then Check His Mode
 			CheckWardenMode()
+		Else
+			SetDebugLog("Skip Warden Mode check as use of warden is not checked.")
 		EndIf
 		SwitchSiegeMachines($pMatchMode, $Remaining, $DebugSiege) ;Check If Siege Machine Switch Needed
 	EndIf

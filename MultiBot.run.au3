@@ -3,10 +3,10 @@
 ; Description ...: This file contains the initialization and main loop sequences f0r the MBR Bot
 ; Author ........:  (2014)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -30,7 +30,7 @@
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sModSupportUrl = "https://forum.multibot.net/forumdisplay.php?fid=20" ;<== Our Website Link Or Link Download
+Global $g_sModSupportUrl = "https://forum.multibot.run/index.php?forums/help.34/" ;<== Our Website Link Or Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
 Global $g_hFrmBot = 0 ; The main GUI window
 
@@ -39,7 +39,6 @@ Global $g_hFrmBot = 0 ; The main GUI window
 #include "COCBot\functions\Config\DelayTimes.au3"
 #include "COCBot\GUI\MBR GUI Design Splash.au3"
 #include "COCBot\functions\Config\ScreenCoordinates.au3"
-#include "COCBot\functions\Config\ScreenCoordinates2.au3" ; TEMP FILE
 #include "COCBot\functions\Config\ImageDirectories.au3"
 #include "COCBot\functions\Config\BBImageDirectories.au3"
 #include "COCBot\functions\Other\ExtMsgBox.au3"
@@ -181,10 +180,10 @@ EndFunc   ;==>InitializeBot
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func ProcessCommandLine()
@@ -271,10 +270,10 @@ EndFunc   ;==>ProcessCommandLine
 ; Return values .: None
 ; Author ........:
 ; Modified ......: cosote (Feb-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func InitializeAndroid($bConfigRead)
@@ -332,15 +331,16 @@ EndFunc   ;==>InitializeAndroid
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func SetupProfileFolder()
 	SetDebugLog("SetupProfileFolder: " & $g_sProfilePath & "\" & $g_sProfileCurrentName)
 	$g_sProfileConfigPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\config.ini"
+	$g_sBOTConfigPath = $g_sProfilePath & "\profile.ini"
 	$g_sProfileBuildingStatsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_buildings.ini"
 	$g_sProfileBuildingPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\building.ini"
 	$g_sProfileLogsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Logs\"
@@ -361,10 +361,10 @@ EndFunc   ;==>SetupProfileFolder
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func InitializeMBR(ByRef $sAI, $bConfigRead)
@@ -425,10 +425,10 @@ Func InitializeMBR(ByRef $sAI, $bConfigRead)
 			"With the first command line parameter, specify the Profilename (you can create profiles on the Bot/Profiles tab, if a " & _
 			"profilename contains a {space}, then enclose the profilename in double quotes). " & _
 			"With the second, specify the name of the Emulator and with the third, an Android Instance (not for BlueStacks). \r\n" & _
-			"Supported Emulators are MEmu, Droid4X, Nox, BlueStacks2, BlueStacks, KOPlayer and LeapDroid.\r\n\r\n" & _
+			"Supported Emulators are MEmu, Nox, BlueStacks2, BlueStacks and iTools AVM.\r\n\r\n" & _
 			"Examples:\r\n" & _
 			"     MultiBot.run.exe MyVillage BlueStacks2\r\n" & _
-			"     MultiBot.run.exe ""My Second Village"" MEmu MEmu_1")
+			"     MultiBot.run.exe " & DoubleQuote("My Second Village") & " MEmu MEmu_1")
 
 	$g_hMutex_BotTitle = CreateMutex($g_sBotTitle)
 	$sAI = GetTranslatedFileIni("MBR GUI Design - Loading", "Android_instance_01", "%s", $g_sAndroidEmulator)
@@ -473,10 +473,10 @@ EndFunc   ;==>InitializeMBR
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func SetupFilesAndFolders()
@@ -532,10 +532,10 @@ EndFunc   ;==>SetupFilesAndFolders
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func FinalInitialization(Const $sAI)
@@ -587,7 +587,7 @@ Func FinalInitialization(Const $sAI)
 	DestroySplashScreen()
 
 	; InitializeVariables();initialize variables used in extrawindows
-	CheckVersion() ; check latest version on mybot.run site
+	CheckBotVersion() ; check latest version on multibotrun site
 	UpdateMultiStats()
 	SetDebugLog("Maximum of " & $g_iGlobalActiveBotsAllowed & " bots running at same time configured")
 	SetDebugLog("MultiBot.run launch time " & Round($g_iBotLaunchTime) & " ms.")
@@ -610,10 +610,10 @@ EndFunc   ;==>FinalInitialization
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func MainLoop($bCheckPrerequisitesOK = True)
@@ -712,6 +712,9 @@ Func runBot() ;Bot that runs everything in order
 		$g_bFullArmy = False
 		$g_iCommandStop = -1
 
+		;Check for Updates
+		CheckAutoUpdateBOT()
+
 		If $g_bChkPlayBBOnly Then
 			runBuilderBase()
 			If ProfileSwitchAccountEnabled() Then checkSwitchAcc() ; Forced to switch
@@ -757,7 +760,7 @@ Func runBot() ;Bot that runs everything in order
 				If _Sleep($DELAYRUNBOT5) Then Return
 				checkMainScreen(False)
 				If $g_bRestart = True Or $g_bChkPlayBBOnly = True Then ContinueLoop
-				Local $aRndFuncList = ['LabCheck', 'Collect', 'CheckTombs', 'ReArm', 'CleanYard']
+				Local $aRndFuncList = ['LabCheck', 'Collect', 'CheckTombs', 'CleanYard']
 				While 1
 					If $g_bRunState = False Then Return
 					If $g_bRestart = True Or $g_bChkPlayBBOnly = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
@@ -1181,9 +1184,6 @@ Func _RunFunction($action)
 			_Sleep($DELAYRUNBOT3)
 		Case "CleanYard"
 			If ($g_iCmbBoostBarracks = 0 Or $g_bFirstStart) And $g_bChkFarmVersion = False Then CleanYard()
-		Case "ReArm"
-			If ($g_iCmbBoostBarracks = 0 Or $g_bFirstStart) And $g_bChkFarmVersion = False Then ReArm()
-			_Sleep($DELAYRUNBOT3)
 		Case "ReplayShare"
 			If ($g_iCmbBoostBarracks = 0 Or $g_bFirstStart) And $g_bChkFarmVersion = False Then ReplayShare($g_bShareAttackEnableNow)
 			_Sleep($DELAYRUNBOT3)

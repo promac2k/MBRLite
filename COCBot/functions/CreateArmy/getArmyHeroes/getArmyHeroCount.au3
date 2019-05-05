@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: MonkeyHunter (06-2016), MR.ViPER (10-2016), Fliegerfaust (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -305,7 +305,7 @@ Func LabGuiDisplay() ; called from main loop to get an early status for indictor
 
 	$iLastTimeChecked[$g_iCurAccount] = _NowCalc()
 
-	If QuickMIS("BC1", @ScriptDir & "\imgxml\Lab\Research", 200, 620 + $g_iBottomOffsetYNew, 700, 700 + $g_iBottomOffsetYNew) Then ; RC Done
+	If QuickMIS("BC1", @ScriptDir & "\imgxml\Lab\Research", 200, 595 + $g_iBottomOffsetYNew, 700, 670 + $g_iBottomOffsetYNew) Then ; RC Done
 		;If $g_iDebugImageSave = 1 Then DebugImageSave("LabUpgrade") ; Debug Only
 		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY)
 		If _Sleep($DELAYLABORATORY1) Then Return ; Wait for window to open

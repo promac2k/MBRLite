@@ -7,10 +7,10 @@
 ; Author ........: Zax (2015)
 ; Modified ......: Safar46 (2015), Hervidero (2015-04), HungLe (2015-04), Sardo (2015-08), Promac (2015-12), Hervidero (2016-01), MonkeyHunter (2016-07),
 ;				   CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -1252,10 +1252,10 @@ Func RemainingCCcapacity()
 	If $g_iTotalDonateTroopCapacity < 0 Then
 		SetLog("Unable to read Clan Castle Capacity!", $COLOR_ERROR)
 	Else
-		Local $sSpellText = $sCapSpells <> -1 ? ", Spells: " & $iDonatedSpells & "/" & $iCapSpellsTotal : ""
-		Local $sSiegeMachineText = $sCapSiegeMachine <> -1 ? ", Siege Machine: " & $iDonatedSiegeMachine & "/" & $iCapSiegeMachineTotal : ""
+		Local $sSpellText = $sCapSpells <> -1 ? ", Spells: " & $iDonatedSpells & $FORWARD_SLASH & $iCapSpellsTotal : ""
+		Local $sSiegeMachineText = $sCapSiegeMachine <> -1 ? ", Siege Machine: " & $iDonatedSiegeMachine & $FORWARD_SLASH & $iCapSiegeMachineTotal : ""
 
-		SetLog("Chat Troops: " & $iDonatedTroops & "/" & $iCapTroopsTotal & $sSpellText & $sSiegeMachineText)
+		SetLog("Chat Troops: " & $iDonatedTroops & $FORWARD_SLASH & $iCapTroopsTotal & $sSpellText & $sSiegeMachineText)
 	EndIf
 
 EndFunc   ;==>RemainingCCcapacity

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Everyone all the time  :)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -102,7 +102,7 @@ Global $g_bDebugSmartZap = False ; verbose logs for SmartZap users
 Global $g_bDebugAttackCSV = False ; Verbose log output of actual attack script plus bot actions
 Global $g_bDebugMakeIMGCSV = False ; Saves "clean" iamge and image with all drop points and detected buildings marked
 Global $g_bDebugBetaVersion = StringInStr($g_sLiteVersion, " b") > 0 ; not saved and only used for special beta releases
-Global $g_bDebugGetVillageSize = True
+Global $g_bDebugGetVillageSize = False
 
 ; <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ; <><><><> ONLY Enable items below this line when debugging special errors listed!! <><><><>
@@ -220,6 +220,7 @@ Global $g_aiAndroidEmbeddedCtrlTarget[10] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_avAndroidShieldStatus[5] = [Default, 0, 0, Default, Default] ; Current Android Shield status (0: True = Shield Up, False = Shield Down, Default only for init; 1: Color; 2: Transparency = 0-255; 3: Invisible Shield; 4: Detached Shield)
 
 Global $g_bPoliteCloseCoC = False ; True: PoliteCloseCoC() function will try to perform a polite close by going back and press exit button, False am force-stop to kill game
+Global $g_BotCloseCount = 0 ; Count of close bot attemps while attacking
 Global Const $g_bAndroidBackgroundLaunchEnabled = False ; Headless mode not finished yet (2016-07-13, cosote)
 Global $g_bAndroidCheckTimeLagEnabled = True ; Checks every 60 Seconds or later in main loops (Bot Run, Idle and SearchVillage) is Android needs reboot due to time lag (see $g_iAndroidTimeLagThreshold)
 Global $g_iAndroidAdbAutoTerminate = 0 ; Steady ADB shell instance is automatically closed after this number of executed commands, 0 = disabled (test for BS to fix frozen screen situation!)
@@ -254,9 +255,9 @@ Global $__MEmu_Window[4][5] = _ ; Alternative window sizes (array must be ordere
         ["2.5.0", $g_iDEFAULT_WIDTH + 51, $g_iDEFAULT_HEIGHT - 12, 45, "0"], _
         ["2.2.1", $g_iDEFAULT_WIDTH + 51, $g_iDEFAULT_HEIGHT - 12, 45, "0"] _
         ]
-Global $__Nox_Config[1][2] = _ ; Alternative Nox Control ID (array must be ordered by version descending!)
+Global $__Nox_Config[1][3] = _ ; Alternative Nox Control ID (array must be ordered by version descending!)
 		[ _ ; Version|$g_sAppClassInstance
-		["3.3.0", "[CLASS:subWin; INSTANCE:1]|[TEXT:QWidgetClassWindow; CLASS:Qt5QWindowIcon]"] _ ; use multiple index as during undock it can change
+		["3.3.0", "[CLASS:subWin; INSTANCE:1]|[CLASS:AnglePlayer_0; INSTANCE:1]", True] _ ; subWin is used for OpenGL and AnglePlayer_0 for DirectX, $g_bAndroidControlUseParentPos is set to True to support DirectX when docked
 		]
 
 ;   0             |1         |2                       |3                                 |4               |5                     |6                      |7                     |8                      |9             |10                  |11                           |12                    |13                                  |14                                   |15
@@ -397,7 +398,7 @@ Global $g_hAndroidControl = 0 ; Handle for Android Screen Control
 
 Global $g_bInitAndroid = True ; Used to cache android config, is set to False once initialized, new emulator window handle resets it to True
 
-Global const $g_iCoCReconnectingTimeout = 10000 ; When still (or again) CoC reconnecting animation then restart CoC (handled in checkObstacles)
+Global const $g_iCoCReconnectingTimeout = 30000 ; When still (or again) CoC reconnecting animation then restart CoC (handled in checkObstacles)
 
 ; Special Android Emulator variables
 Global $__BlueStacks_Version
@@ -415,6 +416,13 @@ Global $__VBoxVMinfo ; Virtualbox vminfo config details of android instance
 Global $__VBoxGuestProperties ; Virtualbox guestproperties config details of android instance
 Global $__VBoxExtraData ; Virtualbox extra data details of android instance
 
+Func DoubleQuote($text)
+	;e.g $text=some text
+	;This function will add double quote so it will become "some text"
+	Return Chr(34) & $text & Chr(34)
+EndFunc   ;==>DoubleQuote
+
+Global $FORWARD_SLASH = Chr(47)
 ; <><><><><><>  Android.au3 globals <><><><><><>
 ; <><><><><><><><><><><><><><><><><><><><><><><><>
 #Tidy_On
@@ -433,6 +441,7 @@ Global $g_sPrivateProfilePath = @MyDocumentsDir & "\MultiBot.run-Profiles" ; Use
 Global Const $g_sProfilePresetPath = @ScriptDir & "\Strategies"
 Global $g_sProfileCurrentName = "" ; Name of profile currently being used
 Global $g_sProfileConfigPath = "" ; Path to the current config.ini being used in this profile
+Global $g_sBOTConfigPath = "" ; Path to the current bot.ini being used in this bot
 Global $g_sProfileBuildingStatsPath = "" ; Path to stats_chkweakbase.ini file for this profile
 Global $g_sProfileBuildingPath = "" ; Paths to building.ini file for this profile
 Global $g_sProfileLogsPath = "", $g_sProfileLootsPath = "", $g_sProfileTempPath = "", $g_sProfileTempDebugPath = "" ; Paths to log/image/temp folders for this profile
@@ -621,31 +630,31 @@ Global Const $g_aiTroopSpace[$eTroopCount] = [ _
 		1, 1, 5, 1, 2, 5, 4, 14, 20, 25, 10, 6, 30, _
 		2, 5, 8, 30, 12, 30, 6, 15]
 Global Const $g_aiTroopTrainTime[$eTroopCount] = [ _
-		20, 24, 120, 28, 60, 120, 120, 480, 720, 720, 360, 120, 1440, _
-		36, 90, 180, 600, 360, 600, 120, 360]
+		5, 6, 30, 7, 15, 30, 30, 120, 180, 180, 90, 30, 360, _
+		18, 45, 90, 300, 180, 300, 60, 180]
 ; Zero element contains number of levels, elements 1 thru n contain cost of that level troop
 Global Const $g_aiTroopCostPerLevel[$eTroopCount][10] = [ _
 		[8, 25, 40, 60, 100, 150, 200, 250, 300], _ 			        ; Barbarian
 		[8, 50, 80, 120, 200, 300, 400, 500, 600], _ 			        ; Archer
 		[9, 250, 750, 1250, 1750, 2250, 3000, 3500, 4000, 4500], _ 	    ; Giant
 		[7, 25, 40, 60, 80, 100, 150, 200], _ 				 	        ; Goblin
-		[8, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750], _          ; WallBreaker
-		[8, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500], _ 	        ; Balloon
-		[9, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500], _    ; Wizard
-		[5, 5000, 6000, 8000, 10000, 15000], _					        ; Healer
-		[7, 18000, 20000, 22000, 24000, 26000, 28000, 30000], _         ; Dragon
-		[8, 21000, 24000, 27000, 30000, 33000, 35000, 37000, 39000], _  ; Pekka
-		[6, 10000, 11000, 12000, 13000, 14000, 15000], _ 			    ; BabyDragon
+		[8, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000], _            ; WallBreaker
+		[8, 1750, 2250, 2750, 3500, 4000, 4500, 5000, 5500], _ 	        ; Balloon
+		[9, 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3800, 4200], _    ; Wizard
+		[5, 5000, 6000, 8000, 10000, 14000], _					        ; Healer
+		[7, 10000, 12000, 14000, 16000, 18000, 20000, 22000], _         ; Dragon
+		[8, 14000, 16000, 18000, 20000, 22500, 25000, 27500, 30000], _  ; Pekka
+		[6, 5000, 6000, 7000, 8000, 9000, 10000], _ 			        ; BabyDragon
 		[6, 4200, 4800, 5200, 5600, 6000, 6400], _  			        ; Miner
-		[3, 36000, 40000, 44000], _  		                 	        ; ElectroDragon
-		[8, 6, 7, 8, 9, 10, 11, 12, 13], _ 							    ; Minion
-		[8, 40, 45, 52, 58, 65, 90, 115, 140], _					    ; HogRider
-		[7, 70, 100, 130, 160, 190, 220, 250], _ 				 	    ; Valkyrie
-		[8, 300, 375, 450, 525, 600, 675, 750, 825], _ 				    ; Golem
-		[4, 175, 225, 275, 325], _ 								 	    ; Witch
+		[3, 28000, 32000, 36000], _  		                 	        ; ElectroDragon
+		[8, 4, 5, 6, 7, 8, 9, 10, 11], _ 							    ; Minion
+		[9, 30, 34, 38, 42, 48, 60, 80, 100, 120], _					; HogRider
+		[7, 50, 65, 80, 100, 130, 160, 190], _ 				 	        ; Valkyrie
+		[8, 200, 250, 300, 350, 425, 500, 600, 700], _ 				    ; Golem
+		[5, 125, 150, 175, 225, 275], _ 								; Witch
 		[5, 390, 450, 510, 570, 630], _  							    ; Lavahound
-		[4, 110, 130, 150, 170], _  								    ; Bowler
-		[4, 220, 240, 260, 280]] 									    ; IceGolem
+		[4, 70, 95, 115, 140], _  								        ; Bowler
+		[5, 220, 240, 260, 280, 300]] 									; IceGolem
 Global Const $g_aiTroopDonateXP[$eTroopCount] = [1, 1, 5, 1, 2, 5, 4, 14, 20, 25, 10, 6, 30, 2, 5, 8, 30, 12, 30, 6, 15]
 
 ; Spells
@@ -654,14 +663,14 @@ Global Enum $eSpellLightning, $eSpellHeal, $eSpellRage, $eSpellJump, $eSpellFree
 Global Const $g_asSpellNames[$eSpellCount] = ["Lightning", "Heal", "Rage", "Jump", "Freeze", "Clone", "Poison", "Earthquake", "Haste", "Skeleton", "Bat"]
 Global Const $g_asSpellShortNames[$eSpellCount] = ["LSpell", "HSpell", "RSpell", "JSpell", "FSpell", "CSpell", "PSpell", "ESpell", "HaSpell", "SkSpell", "BaSpell"]
 Global Const $g_aiSpellSpace[$eSpellCount] = [2, 2, 2, 2, 1, 3, 1, 1, 1, 1, 1]
-Global Const $g_aiSpellTrainTime[$eSpellCount] = [360, 360, 360, 360, 360, 720, 180, 180, 180, 180, 180]
+Global Const $g_aiSpellTrainTime[$eSpellCount] = [360, 360, 360, 360, 180, 540, 180, 180, 180, 180, 180]
 ; Zero element contains number of levels, elements 1 thru n contain cost of that level spell
 Global Const $g_aiSpellCostPerLevel[$eSpellCount][8] = [ _
 		[7, 15000, 16500, 18000, 20000, 22000, 24000, 26000], _  ;LightningSpell
 		[7, 15000, 16500, 18000, 19000, 21000, 23000, 25000], _  ;HealSpell
-		[5, 23000, 25000, 27000, 30000, 33000], _     			 ;RageSpell
+		[5, 20000, 22000, 24000, 26000, 28000], _     			 ;RageSpell
 		[3, 23000, 27000, 31000], _        						 ;JumpSpell
-		[7, 12000, 13000, 14000, 15000, 16000, 17000, 18000], _  ;FreezeSpell
+		[7, 6000, 7000, 8000, 9000, 10000, 11000, 12000], _      ;FreezeSpell
 		[5, 38000, 39000, 41000, 43000, 45000], _				 ;CloneSpell
 		[5, 95, 110, 125, 140, 155], _         					 ;PoisonSpell
 		[4, 125, 140, 160, 180], _    							 ;EarthquakeSpell
@@ -779,6 +788,19 @@ Func GetTroopName(Const $iIndex, $iQuantity = 1)
 		Return "Clan Castle"
 	EndIf
 EndFunc   ;==>GetTroopName
+Func GetTroopShortName(Const $iIndex)
+	If $iIndex >= $eBarb And $iIndex <= $eIceG Then
+		Return $g_asTroopShortNames[$iIndex]
+	ElseIf $iIndex >= $eLSpell And $iIndex <= $eBaSpell Then
+		Return $g_asSpellShortNames[$iIndex - $eLSpell]
+	ElseIf $iIndex >= $eKing And $iIndex <= $eWarden Then
+		Return $g_asHeroShortNames[$iIndex - $eKing]
+	ElseIf $iIndex >= $eWallW And $iIndex <= $eStoneS Then
+		Return $g_asSiegeMachineShortNames[$iIndex - $eWallW]
+	ElseIf $iIndex = $eCastle Then
+		Return "Castle"
+	EndIf
+EndFunc   ;==>GetTroopShortName
 ;--------------------------------------------------------------------------
 ; END: GetTroopName()
 ;--------------------------------------------------------------------------
@@ -1173,7 +1195,6 @@ Global $g_bDropTrophyEnable = False, $g_iDropTrophyMax = 1200, $g_iDropTrophyMin
 ; <><><><> Bot / Options <><><><>
 Global $g_sLanguage = "English"
 Global $g_bDisableSplash = False ; Splash screen disabled = 1
-Global $g_bMyBotDance = False  ; Dancing MyBot splash screen
 Global $g_bCheckVersion = True
 Global $g_bDeleteLogs = True, $g_iDeleteLogsDays = 2, $g_bDeleteTemp = True, $g_iDeleteTempDays = 2, $g_bDeleteLoots = True, $g_iDeleteLootsDays = 2
 Global $g_bAutoStart = False, $g_iAutoStartDelay = 10
@@ -1190,6 +1211,9 @@ Global $g_bForceSinglePBLogoff = 0, $g_iSinglePBForcedLogoffTime = 18, $g_iSingl
 Global $g_bAutoResumeEnable = 0, $g_iAutoResumeTime = 5
 Global $g_bDisableNotifications = False
 Global $g_bForceClanCastleDetection = 0
+Global $g_bChkAutoUpdateBOT = False ; Autoupdate of BOT
+Global $g_iAutoUpdateBOTCount = 0 ; Autoupdate of BOT Cicles Count
+Global $g_iAutoUpdateBOTMax = 5 ; Autoupdate of BOT Maximum cicles before validate new update
 
 ; <><><><> Bot / Android <><><><>
 ; <<< nothing here >>>
@@ -1236,7 +1260,7 @@ Global Const $g_sDirLanguages = @ScriptDir & "\Languages\"
 Global Const $g_sDefaultLanguage = "English"
 
 ; Notify
-Global Const $g_sNotifyVersion = "v2.0"
+Global Const $g_sNotifyVersion = "v2.1"
 Global Const $g_iPBRemoteControlInterval = 90000 ; 90 secs
 Global $g_sLootFileName = ""
 
@@ -1278,7 +1302,7 @@ Global $g_aiWardenAltarPos[2] = [-1, -1] ; position Grand Warden Altar
 Global $g_aiLaboratoryPos[2] = [-1, -1] ; Position of laboratory
 Global $g_aiClanCastlePos[2] = [-1, -1] ; Position of clan castle
 Global $g_iDetectedImageType = 0 ; Image theme; 0 = normal, 1 = snow
-Global $g_abIsToProccedWith[2] = [True, True] ; ReArm, CheckTombs
+Global $g_abIsToProccedWith[1] = [True] ; CheckTombs
 
 ;Builder Base
 Global $g_aiCurrentLootBB[$eLootCountBB] = [0, 0, 0] ; current stats on builders base
@@ -1341,10 +1365,10 @@ Global $g_aiTownHallDetails[4] = [-1, -1, -1, -1] ; [LocX, LocY, BldgLvl, Quanti
 ; Attack
 Global Const $g_aaiTopLeftDropPoints[5][2] = [[66, 299], [174, 210], [240, 169], [303, 127], [390, 55]]
 Global Const $g_aaiTopRightDropPoints[5][2] = [[466, 60], [556, 120], [622, 170], [684, 220], [775, 285]]
-Global Const $g_aaiBottomLeftDropPoints[5][2] = [[81, 390], [174, 410], [235, 433], [299, 482], [390, 522]] ; RC Done
-Global Const $g_aaiBottomRightDropPoints[5][2] = [[466, 512], [554, 467], [615, 422], [678, 372], [765, 315]] ; RC Done
+Global Const $g_aaiBottomLeftDropPoints[5][2] = [[81, 346], [174, 411], [235, 458], [299, 510], [365, 535]]
+Global Const $g_aaiBottomRightDropPoints[5][2] = [[498, 530], [554, 495], [615, 455], [678, 405], [765, 340]]
 Global Const $g_aaiEdgeDropPoints[4] = [$g_aaiBottomRightDropPoints, $g_aaiTopLeftDropPoints, $g_aaiBottomLeftDropPoints, $g_aaiTopRightDropPoints]
-Global Const $g_aiUseAllTroops[37] = [$eBarb, $eArch, $eGiant, $eGobl, $eWall, $eBall, $eWiza, $eHeal, $eDrag, $ePekk, $eBabyD, $eMine, $eEDrag, $eMini, $eHogs, $eValk, $eGole, $eWitc, $eLava, $eBowl, $eIceG, $eKing, $eQueen, $eWarden, $eCastle, $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eWallW, $eBattleB, $eStoneS]
+Global Const $g_aiUseAllTroops[38] = [$eBarb, $eArch, $eGiant, $eGobl, $eWall, $eBall, $eWiza, $eHeal, $eDrag, $ePekk, $eBabyD, $eMine, $eEDrag, $eMini, $eHogs, $eValk, $eGole, $eWitc, $eLava, $eBowl, $eIceG, $eKing, $eQueen, $eWarden, $eCastle, $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eBaSpell, $eWallW, $eBattleB, $eStoneS]
 Global Const $g_aiUseBarracks[28] = [$eBarb, $eArch, $eGiant, $eGobl, $eWall, $eBall, $eWiza, $eHeal, $eDrag, $ePekk, $eBabyD, $eMine, $eEDrag, $eKing, $eQueen, $eWarden, $eCastle, $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eSkSpell, $eBaSpell]
 Global Const $g_aiUseBarbs[16] = [$eBarb, $eKing, $eQueen, $eWarden, $eCastle, $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eSkSpell, $eBaSpell]
 Global Const $g_aiUseArchs[16] = [$eArch, $eKing, $eQueen, $eWarden, $eCastle, $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eSkSpell, $eBaSpell]
@@ -1501,7 +1525,7 @@ Func TranslateTroopNames()
 			[440, 444 + $g_iMidOffsetY, 2, GetTranslatedFileIni("MBR Global GUI Design Names Troops", "TxtIceGolems", "Ice Golems"), $eIcnIceGolem, 0], _
 			[547, 337 + $g_iMidOffsetY, 2, GetTranslatedFileIni("MBR Global GUI Design Names Troops", "TxtWallWreckers", "Wall Wreckers"), $eIcnLabWallW, 0], _
 			[547, 444 + $g_iMidOffsetY, 2, GetTranslatedFileIni("MBR Global GUI Design Names Troops", "TxtBattleBlimps", "Battle Blimps"), $eIcnLabBattleB, 0], _
-			[654, 337 + $g_iMidOffsetY, 2, GetTranslatedFileIni("MBR Global GUI Design Names Troops", "TxtStoneSlammers", "Stone Slammer"), $eIcnLabStoneS, 0]]
+			[654, 337 + $g_iMidOffsetY, 2, GetTranslatedFileIni("MBR Global GUI Design Names Troops", "TxtStoneSlammers", "Stone Slammers"), $eIcnLabStoneS, 0]]
 EndFunc   ;==>TranslateTroopNames
 
 ; Donate
@@ -1529,7 +1553,7 @@ Global $g_iDonationWindowY = 0
 
 ; Drop trophy
 Global $g_bDisableDropTrophy = False ; this will be True if you tried to use Drop Throphy and did not have Tier 1 or 2 Troops to protect you expensive troops from being dropped.
-Global $g_avDTtroopsToBeUsed[6][2] = [["Barb", 0], ["Arch", 0], ["Giant", 0], ["Wall", 0], ["Gobl", 0], ["Mini", 0]] ; DT available troops [type, qty]
+Global $g_avDTtroopsToBeUsed[8][2] = [["Barb", 0], ["Arch", 0], ["Giant", 0], ["Wall", 0], ["Gobl", 0], ["Mini", 0], ["Ball", 0], ["Wiza", 0]] ; DT available troops [type, qty]
 
 ; Obstacles
 Global $g_bMinorObstacle = False
@@ -1568,9 +1592,9 @@ Global $g_iLSpellLevel = 1
 Global $g_iESpellLevel = 1
 Global Const $g_fDarkStealFactor = 0.75
 Global Const $g_fDarkFillLevel = 0.70
-; Array to hold Total HP of DE Drills at each level (1-6)
+; Array to hold Total HP of DE Drills at each level (1-7)
 Global Const $g_aDrillLevelHP[7] = [800, 860, 920, 980, 1060, 1160, 1280]
-; Array to hold Total Amount of DE available from Drill at each level (1-6)
+; Array to hold Total Amount of DE available from Drill at each level (1-7)
 Global Const $g_aDrillLevelTotal[7] = [160, 300, 540, 840, 1280, 1800, 2400]
 ; Array to hold Total Damage of Lightning Spell at each level (1-7)
 Global Const $g_aLSpellDmg[7] = [300, 360, 420, 480, 540, 600, 660]
@@ -1747,6 +1771,8 @@ Global $g_sPercentagesResources = Null
 ; Report
 Global $g_iAvailableAttacksBB = 0, $g_iLastDamage = 0
 Global $g_sTxtRegistrationToken = ""
+Global $g_bTokenValidated = False
+Global $g_iStatsBBBonusLast[4] = [0, 0, 0, 0] ; GOLD | Elixir | Trophies | Last Damage
 
 Global Enum $g_iAirDefense = 0, $g_iCrusher, $g_iGuardPost, $g_iCannon, $g_iBuilderHall, $g_iDeployPoints
 Global $g_aBuilderHallPos[1][2] = [[Null, Null]], $g_aAirdefensesPos[0][2], $g_aCrusherPos[0][2], $g_aCannonPos[0][2], $g_aGuardPostPos[0][2], $g_aDeployPoints

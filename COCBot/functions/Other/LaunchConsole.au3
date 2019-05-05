@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Cosote (2015-12)
 ; Modified ......: Cosote (2016-08)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -131,7 +131,7 @@ Func ProcessExists2($ProgramPath, $ProgramParameter = Default, $CompareMode = De
 			Local $processCommandLineCompare = StringReplace(StringReplace(StringReplace(StringReplace($Process[2], ".exe", "", 1), " ", ""), '"', ""), "'", "")
 			If ($CompareMode = 0 And $commandLineCompare = $processCommandLineCompare) Or _
 					($CompareMode = 0 And StringRight($commandLineCompare, StringLen($processCommandLineCompare)) = $processCommandLineCompare) Or _
-					($CompareMode = 0 And $CompareCommandLineFunc <> "" And Execute($CompareCommandLineFunc & "(""" & StringReplace($Process[2], """", "") & """)") = True) Or _
+					($CompareMode = 0 And $CompareCommandLineFunc <> "" And Execute($CompareCommandLineFunc & "(" & DoubleQuote(StringReplace($Process[2], """", "")) & ")") = True) Or _
 					$CompareMode = 1 Then
 				$pid = Number($Process[0])
 				;ExitLoop
@@ -184,7 +184,7 @@ Func ProcessesExist($ProgramPath, $ProgramParameter = Default, $CompareMode = De
 		Local $processCommandLineCompare = StringReplace(StringReplace(StringReplace(StringReplace($Process[2], ".exe", "", 1), " ", ""), '"', ""), "'", "")
 		If ($CompareMode = 0 And $commandLineCompare = $processCommandLineCompare) Or _
 				($CompareMode = 0 And StringRight($commandLineCompare, StringLen($processCommandLineCompare)) = $processCommandLineCompare) Or _
-				($CompareMode = 0 And $CompareCommandLineFunc <> "" And Execute($CompareCommandLineFunc & "(""" & StringReplace($Process[2], """", "") & """)") = True) Or _
+				($CompareMode = 0 And $CompareCommandLineFunc <> "" And Execute($CompareCommandLineFunc & "(" & DoubleQuote(StringReplace($Process[2], """", "")) & ")") = True) Or _
 				$CompareMode = 1 Then
 
 			$pid = Number($Process[0])
@@ -393,7 +393,7 @@ Func _WinAPI_SetConsoleIcon($g_sLibIconPath, $nIconID, $hWnD = Default)
 				$Result = DllCall("kernel32.dll", "hwnd", "GetConsoleWindow")
 				$error = @error
 				$extended = @extended
-				If UBound($Result) > 0 Then	$hWnD = $Result[0]
+				If UBound($Result) > 0 Then $hWnD = $Result[0]
 			EndIf
 			If IsHWnd($hWnD) Then
 				_SendMessage($hWnD, $WM_SETICON, 0, DllStructGetData($hIcon, 1)) ; SMALL_ICON

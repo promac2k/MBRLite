@@ -26,7 +26,7 @@ Func AutoUpgrade($bTest = False)
 	Local $Result = _AutoUpgrade()
 	$g_bRunState = $bWasRunState
 	Return $Result
-EndFunc
+EndFunc   ;==>AutoUpgrade
 
 Func _AutoUpgrade()
 	If $g_iChkAutoUpgrade = 0 Then Return ; disabled, no need to continue...
@@ -66,7 +66,7 @@ Func _AutoUpgrade()
 		If _Sleep($DELAYAUTOUPGRADEBUILDING1) Then Return
 
 		; search for 000 in builders menu, if 000 found, a possible upgrade is available
-		If QuickMIS("BC1", $g_sImgAUpgradeZero, 180, 80 + $g_iNextLineOffset+ $g_iMidOffsetYNew, 480, 350+ $g_iMidOffsetYNew) Then ; RC Done
+		If QuickMIS("BC1", $g_sImgAUpgradeZero, 180, 80 + $g_iNextLineOffset + $g_iMidOffsetYNew, 480, 410 + $g_iMidOffsetYNew) Then ; RC Done
 			SetLog("Possible upgrade found !", $COLOR_SUCCESS)
 			$g_iCurrentLineOffset = $g_iNextLineOffset + $g_iQuickMISY
 		Else
@@ -75,7 +75,7 @@ Func _AutoUpgrade()
 		EndIf
 
 		; check in the line of the 000 if we can see "New" or the Gear of the equipment, in this case, will not do the upgrade
-		If QuickMIS("NX",$g_sImgAUpgradeObst, 180, 80 + $g_iCurrentLineOffset - 15+ $g_iMidOffsetYNew, 480, 80 + $g_iCurrentLineOffset + 15+ $g_iMidOffsetYNew) <> "none" Then ; RC Done
+		If QuickMIS("NX", $g_sImgAUpgradeObst, 180, 80 + $g_iCurrentLineOffset - 15 + $g_iMidOffsetYNew, 480, 80 + $g_iCurrentLineOffset + 15 + $g_iMidOffsetYNew) <> "none" Then ; RC Done
 			SetLog("This is a New Building or an Equipment, looking next...", $COLOR_WARNING)
 			$g_iNextLineOffset = $g_iCurrentLineOffset
 			ContinueLoop
@@ -85,16 +85,23 @@ Func _AutoUpgrade()
 		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY)
 		If _Sleep($DELAYAUTOUPGRADEBUILDING1) Then Return
 
-		; check if any wrong click by verifying the presence of the Upgrade button (the hammer)
-		If Not QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 630+ $g_iBottomOffsetYNew, 740, 680+ $g_iBottomOffsetYNew) Then ; RC Done
+		; get the name and actual level of upgrade selected, if strings are empty, will exit Auto Upgrade, an error happens
+		$g_aUpgradeNameLevel = BuildingInfo(242, 464)
+		Setlog("Clicked in " & $g_aUpgradeNameLevel[1])
+
+		If StringInStr(StringUpper($g_aUpgradeNameLevel[1]), "WALL") > 0 Then
+			$g_iNextLineOffset = $g_iCurrentLineOffset
+			ContinueLoop
+		EndIf
+
+		; check if any wrong click by verifying the presence of the Upgrade button (the hammer) - $g_iBottomOffsetYNew ? -88
+		If Not QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
 			SetLog("No upgrade here... Wrong click, looking next...", $COLOR_WARNING)
 			;$g_iNextLineOffset = $g_iCurrentLineOffset -> not necessary finally, but in case, I keep lne commented
 			$g_iNextLineOffset = $g_iCurrentLineOffset
 			ContinueLoop
 		EndIf
 
-		; get the name and actual level of upgrade selected, if strings are empty, will exit Auto Upgrade, an error happens
-		$g_aUpgradeNameLevel = BuildingInfo(242, 520 + $g_iBottomOffsetY)
 		If $g_aUpgradeNameLevel[0] = "" Then
 			SetLog("Error when trying to get upgrade name and level, looking next...", $COLOR_ERROR)
 			$g_iNextLineOffset = $g_iCurrentLineOffset
@@ -147,11 +154,11 @@ Func _AutoUpgrade()
 
 		Switch $g_aUpgradeNameLevel[1]
 			Case "Barbarian King", "Archer Queen", "Grand Warden"
-				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 690, 540+ $g_iMidOffsetYNew, 730, 580+ $g_iMidOffsetYNew) ; RC Done ; get resource
+				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 690, 540 + $g_iMidOffsetYNew, 730, 580 + $g_iMidOffsetYNew) ; RC Done ; get resource
 				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(598, 509) ; get cost
 				$g_aUpgradeResourceCostDuration[2] = getHeroUpgradeTime(578, 450) ; get duration
 			Case Else
-				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 460, 510+ $g_iMidOffsetYNew, 500, 550+ $g_iMidOffsetYNew) ; RC Done ; get resource
+				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 460, 510 + $g_iMidOffsetYNew, 500, 550 + $g_iMidOffsetYNew) ; RC Done ; get resource
 				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(366, 487 + $g_iMidOffsetY) ; get cost
 				$g_aUpgradeResourceCostDuration[2] = getBldgUpgradeTime(190, 307 + $g_iMidOffsetY) ; get duration
 		EndSwitch
@@ -244,4 +251,4 @@ Func _AutoUpgrade()
 	SetLog("Auto Upgrade finished", $COLOR_INFO)
 	ClickP($aAway, 1, 0, "#0000") ;Click Away
 
-EndFunc   ;==>AutoUpgrade
+EndFunc   ;==>_AutoUpgrade

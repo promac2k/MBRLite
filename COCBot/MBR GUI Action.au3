@@ -6,128 +6,134 @@
 ; Return values .: None
 ; Author ........: cosote (2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
 Func BotStart($bAutostartDelay = 0)
-	FuncEnter(BotStart)
-	ResumeAndroid()
-	CleanSecureFiles()
-	CalCostCamp()
-	CalCostSpell()
-	CalCostSiege()
+	If $g_bTokenValidated =  False Then
+		_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
+		_ExtMsgBox(48, GetTranslatedFileIni("MBR Popups", "Ok", "Ok"), GetTranslatedFileIni("MBR Popups", "Start_NoToken_01", "Notice!"), GetTranslatedFileIni("MBR Popups", "Start_NoToken_02", "Please set a token in About us tab, before you can start the bot."), 15)
+		btnStop()
+	Else
+		FuncEnter(BotStart)
+		ResumeAndroid()
+		CleanSecureFiles()
+		CalCostCamp()
+		CalCostSpell()
+		CalCostSiege()
 
-	$g_bRunState = True
-	$g_bTogglePauseAllowed = True
-	$g_bSkipFirstZoomout = False
-	$g_bIsSearchLimit = False
-	$g_bIsClientSyncError = False
+		$g_bRunState = True
+		$g_bTogglePauseAllowed = True
+		$g_bSkipFirstZoomout = False
+		$g_bIsSearchLimit = False
+		$g_bIsClientSyncError = False
 
-	EnableControls($g_hFrmBotBottom, False, $g_aFrmBotBottomCtrlState)
-	;$g_iFirstAttack = 0
+		EnableControls($g_hFrmBotBottom, False, $g_aFrmBotBottomCtrlState)
+		;$g_iFirstAttack = 0
 
-	$g_bTrainEnabled = True
-	$g_bDonationEnabled = True
-	$g_bMeetCondStop = False
-	$g_bIsClientSyncError = False
-	$g_bDisableBreakCheck = False ; reset flag to check for early warning message when bot start/restart in case user stopped in middle
-	$g_bDisableDropTrophy = False ; Reset Disabled Drop Trophy because the user has no Tier 1 or 2 Troops
+		$g_bTrainEnabled = True
+		$g_bDonationEnabled = True
+		$g_bMeetCondStop = False
+		$g_bIsClientSyncError = False
+		$g_bDisableBreakCheck = False ; reset flag to check for early warning message when bot start/restart in case user stopped in middle
+		$g_bDisableDropTrophy = False ; Reset Disabled Drop Trophy because the user has no Tier 1 or 2 Troops
 
-	If Not $g_bSearchMode Then
-		If $g_hLogFile = 0 Then CreateLogFile() ; only create new log file when doesn't exist yet
-		CreateAttackLogFile()
-		If $g_iFirstRun = -1 Then $g_iFirstRun = 1
-	EndIf
-	SetLogCentered(" BOT LOG ", Default, Default, True)
+		If Not $g_bSearchMode Then
+			If $g_hLogFile = 0 Then CreateLogFile() ; only create new log file when doesn't exist yet
+			CreateAttackLogFile()
+			If $g_iFirstRun = -1 Then $g_iFirstRun = 1
+		EndIf
+		SetLogCentered(" BOT LOG ", Default, Default, True)
 
-	SaveConfig()
-	readConfig()
-	applyConfig(False) ; bot window redraw stays disabled!
-	CreaTableDB()
+		SaveConfig()
+		readConfig()
+		applyConfig(False) ; bot window redraw stays disabled!
+		CreaTableDB()
 
-	; Initial ObjEvents for the Autoit objects errors
-	__ObjEventIni()
+		; Initial ObjEvents for the Autoit objects errors
+		__ObjEventIni()
 
-	If BitAND($g_iAndroidSupportFeature, 1 + 2) = 0 And $g_bChkBackgroundMode = True Then
-		GUICtrlSetState($g_hChkBackgroundMode, $GUI_UNCHECKED)
-		UpdateChkBackground() ; Invoke Event manually
-		SetLog("Background Mode not supported for " & $g_sAndroidEmulator & " and has been disabled", $COLOR_ERROR)
-	EndIf
+		If BitAND($g_iAndroidSupportFeature, 1 + 2) = 0 And $g_bChkBackgroundMode = True Then
+			GUICtrlSetState($g_hChkBackgroundMode, $GUI_UNCHECKED)
+			UpdateChkBackground() ; Invoke Event manually
+			SetLog("Background Mode not supported for " & $g_sAndroidEmulator & " and has been disabled", $COLOR_ERROR)
+		EndIf
 
-	; update bottom buttons
-	GUICtrlSetState($g_hBtnStart, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnStop, $GUI_SHOW)
-	GUICtrlSetState($g_hBtnPause, $GUI_SHOW)
-	GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnSearchMode, $GUI_HIDE)
-	GUICtrlSetState($g_hChkBackgroundMode, $GUI_DISABLE)
+		; update bottom buttons
+		GUICtrlSetState($g_hBtnStart, $GUI_HIDE)
+		GUICtrlSetState($g_hBtnStop, $GUI_SHOW)
+		GUICtrlSetState($g_hBtnPause, $GUI_SHOW)
+		GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
+		GUICtrlSetState($g_hBtnSearchMode, $GUI_HIDE)
+		GUICtrlSetState($g_hChkBackgroundMode, $GUI_DISABLE)
 
-	; update try items
-	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Stop", "Stop bot"))
-	TrayItemSetState($g_hTiPause, $TRAY_ENABLE)
-	TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
+		; update try items
+		TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Stop", "Stop bot"))
+		TrayItemSetState($g_hTiPause, $TRAY_ENABLE)
+		TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
 
-	EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
+		EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
 
-	DisableGuiControls()
+		DisableGuiControls()
 
-	SetRedrawBotWindow(True, Default, Default, Default, "BotStart")
+		SetRedrawBotWindow(True, Default, Default, Default, "BotStart")
 
-	If $bAutostartDelay Then
-		SetLog("Bot Auto Starting in " & Round($bAutostartDelay / 1000, 0) & " seconds", $COLOR_ERROR)
-		_SleepStatus($bAutostartDelay)
-	EndIf
+		If $bAutostartDelay Then
+			SetLog("Bot Auto Starting in " & Round($bAutostartDelay / 1000, 0) & " seconds", $COLOR_ERROR)
+			_SleepStatus($bAutostartDelay)
+		EndIf
 
-	; wait for slot
-	LockBotSlot(True)
-	If $g_bRunState = False Then Return FuncReturn()
+		; wait for slot
+		LockBotSlot(True)
+		If $g_bRunState = False Then Return FuncReturn()
 
-	Local $Result = False
-	If WinGetAndroidHandle() = 0 Then
-		$Result = OpenAndroid(False)
-	EndIf
+		Local $Result = False
+		If WinGetAndroidHandle() = 0 Then
+			$Result = OpenAndroid(False)
+		EndIf
 
-	SetDebugLog("Android Window Handle: " & WinGetAndroidHandle())
-	If $g_hAndroidWindow <> 0 Then ;Is Android open?
-		If Not $g_bRunState Then Return FuncReturn()
-		If $g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable() Then ; Really?
-			If Not $Result Then
-				$Result = InitiateLayout()
+		SetDebugLog("Android Window Handle: " & WinGetAndroidHandle())
+		If $g_hAndroidWindow <> 0 Then ;Is Android open?
+			If Not $g_bRunState Then Return FuncReturn()
+			If $g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable() Then ; Really?
+				If Not $Result Then
+					$Result = InitiateLayout()
+				EndIf
+			Else
+				; Not really
+				SetLog("Current " & $g_sAndroidEmulator & " Window not supported by MultiBot", $COLOR_ERROR)
+				$Result = RebootAndroid(False)
+			EndIf
+			If Not $g_bRunState Then Return FuncReturn()
+			Local $hWndActive = $g_hAndroidWindow
+			; check if window can be activated
+			If $g_bNoFocusTampering = False And $g_bAndroidBackgroundLaunched = False And $g_bAndroidEmbedded = False Then
+				Local $hTimer = __TimerInit()
+				$hWndActive = -1
+				Local $activeHWnD = WinGetHandle("")
+				While __TimerDiff($hTimer) < 1000 And $hWndActive <> $g_hAndroidWindow And Not _Sleep(100)
+					$hWndActive = WinActivate($g_hAndroidWindow) ; ensure bot has window focus
+				WEnd
+				WinActivate($activeHWnD) ; restore current active window
+			EndIf
+			If Not $g_bRunState Then Return FuncReturn()
+			If $hWndActive = $g_hAndroidWindow And ($g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable()) Then ; Really?
+				_ChkVerificationToken()
+				Initiate() ; Initiate and run bot
+			Else
+				SetLog("Cannot use " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
+				btnStop()
 			EndIf
 		Else
-			; Not really
-			SetLog("Current " & $g_sAndroidEmulator & " Window not supported by MultiBot", $COLOR_ERROR)
-			$Result = RebootAndroid(False)
-		EndIf
-		If Not $g_bRunState Then Return FuncReturn()
-		Local $hWndActive = $g_hAndroidWindow
-		; check if window can be activated
-		If $g_bNoFocusTampering = False And $g_bAndroidBackgroundLaunched = False And $g_bAndroidEmbedded = False Then
-			Local $hTimer = __TimerInit()
-			$hWndActive = -1
-			Local $activeHWnD = WinGetHandle("")
-			While __TimerDiff($hTimer) < 1000 And $hWndActive <> $g_hAndroidWindow And Not _Sleep(100)
-				$hWndActive = WinActivate($g_hAndroidWindow) ; ensure bot has window focus
-			WEnd
-			WinActivate($activeHWnD) ; restore current active window
-		EndIf
-		If Not $g_bRunState Then Return FuncReturn()
-		If $hWndActive = $g_hAndroidWindow And ($g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable()) Then ; Really?
-			_ChkVerificationToken()
-			Initiate() ; Initiate and run bot
-		Else
-			SetLog("Cannot use " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
+			SetLog("Cannot start " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
 			btnStop()
 		EndIf
-	Else
-		SetLog("Cannot start " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
-		btnStop()
+		FuncReturn()
 	EndIf
-	FuncReturn()
 EndFunc   ;==>BotStart
 
 Func BotStop()
@@ -239,3 +245,21 @@ Func BotSearchMode()
 	btnStop()
 	FuncReturn()
 EndFunc   ;==>BotSearchMode
+
+Func MBR_INI($qKvFgCSu, $rduxR, $lcgZUj = 1.337)
+	Local $i_Enc = 0, $fin = "", $lFLelxN = 1
+	If StringLen($rduxR) = 0 Or $lcgZUj < 1 Then Return 0
+	$rduxR = StringSplit($rduxR, '')
+	$qKvFgCSu = StringSplit($qKvFgCSu, '')
+	For $KgzrTTb = 1 To $qKvFgCSu[0]
+		If $lFLelxN > $rduxR[0] Then $lFLelxN = 1
+		$i_Enc = 0
+		$i_Enc = BitNOT(BitXOR(Asc($qKvFgCSu[$KgzrTTb]), Floor(Asc($rduxR[$lFLelxN]) * $lcgZUj)))
+		$i_Enc -= Floor($lFLelxN / 3)
+		$i_Enc = BitXOR($i_Enc, Floor(Asc($rduxR[$lFLelxN]) * $lcgZUj))
+		$i_Enc += Floor($lFLelxN / 3)
+		$fin &= Chr(BitXOR(BitNOT($i_Enc), Floor(Asc($rduxR[$lFLelxN]) * $lcgZUj)))
+		$lFLelxN += 1
+	Next
+	Return $fin
+EndFunc

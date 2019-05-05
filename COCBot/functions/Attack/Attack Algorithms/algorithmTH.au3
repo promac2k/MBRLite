@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: AtoZ (2015)
 ; Modified ......: Barracoda (07-2015), TheMaster1st (10-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ================================================================
 
@@ -306,7 +306,7 @@ Func CheckOneStar($DelayInSec = 0, $Log = True, $CheckHeroes = True)
 
 		If _Sleep(5) Then Return True
 		If $g_bRestart = True Then Return True
-		If $CheckHeroes = True And ($g_bCheckQueenPower = True Or $g_bCheckKingPower = True) Then CheckHeroesHealth() ;Check Heroes Health and activate their abilities if health is not green
+		If $CheckHeroes = True And ($g_bCheckQueenPower = True Or $g_bCheckKingPower = True Or $g_bCheckWardenPower = True) Then CheckHeroesHealth() ;Check Heroes Health and activate their abilities if health is not green
 		;check for one star
 		If _ColorCheck(_GetPixelColor($aWonOneStar[0], $aWonOneStar[1], True), Hex($aWonOneStar[2], 6), $aWonOneStar[3]) Then ;exit if 1 star
 			If $Log = True Then SetLog("Townhall has been destroyed!", $COLOR_ACTION)
@@ -327,6 +327,15 @@ Func CheckOneStar($DelayInSec = 0, $Log = True, $CheckHeroes = True)
 				SetLog("Activating King's power to restore some health before EndBattle", $COLOR_INFO)
 				SelectDropTroop($g_iKingSlot)
 				$g_bCheckKingPower = False
+			EndIf
+
+			If _Sleep(500) Then Return True
+			If $g_bRestart = True Then Return True
+
+			If $g_bCheckWardenPower = True Then
+				SetLog("Activating Warden's power to restore some health before EndBattle", $COLOR_INFO)
+				SelectDropTroop($g_iWardenSlot)
+				$g_bCheckWardenPower = False
 			EndIf
 
 			If $Log = True Then

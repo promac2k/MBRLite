@@ -6,17 +6,19 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: MMHK (07-2017)(01-2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func ParseAttackCSV($debug = False)
 
 	Local $bForceSideExist = False
 	Local $sErrorText, $sTargetVectors = ""
-	Local $iTroopIndex, $bWardenDrop = False
+	Local $iTroopIndex
+	;Need This Var In case of Event Commands Where we don't want bot to waste time on ability check and moves on
+	Local $bCheckHeroAbility = True
 	; TL , TR , BL , BR
 	Local $sides2drop[4] = [False, False, False, False]
 
@@ -31,7 +33,7 @@ Func ParseAttackCSV($debug = False)
 	Else
 		Local $filename = $g_sAttackScrScriptName[$LB]
 	EndIf
-	SetLog("execute " & $filename)
+	SetLog("Attack With Script: " & $filename, $COLOR_INFO)
 
 	Local $f, $line, $acommand, $command
 	Local $value1 = "", $value2 = "", $value3 = "", $value4 = "", $value5 = "", $value6 = "", $value7 = "", $value8 = "", $value9 = ""
@@ -40,6 +42,7 @@ Func ParseAttackCSV($debug = False)
 
 		; Read in lines of text until the EOF is reached
 		For $iLine = 0 To UBound($aLines) - 1
+			$bCheckHeroAbility = True
 			$line = $aLines[$iLine]
 			$sErrorText = "" ; empty error text each row
 			debugAttackCSV("line: " & $iLine + 1)
@@ -111,16 +114,16 @@ Func ParseAttackCSV($debug = False)
 							EndSwitch
 							If CheckCsvValues("MAKE", 1, $value1) And CheckCsvValues("MAKE", 5, $value5) Then
 								$sTargetVectors = StringReplace($sTargetVectors, $value3, "", Default, $STR_NOCASESENSEBASIC) ; if re-making a vector, must remove from target vector string
-								If CheckCsvValues("MAKE", 8, $value8) Then ; Vector is targeted towards building v7.2
+								If CheckCsvValues("MAKE", 8, $value8) Then ; Vector is targeted towards building v2.0.3
 									; new field definitions:
 									; $side = target side string
-									; value3 = Drop point count can be 1 or 5 value only
-									; value4 = addtiles Ignore if value3 = 5, only used when dropping in sigle point
+									; value3 = Drop points can be 1,3,5,7... ODD number Only e.g if 5=[2, 1, 0, -1, -2] will Add tiles to left and right to make drop point 3 would be exact positon of building
+									; value4 = addtiles
 									; value5 = versus ignore direction
 									; value6 = RandomX ignored as image find location will be "random" without need to add more variability
 									; value7 = randomY ignored as image find location will be "random" without need to add more variability
 									; value8 = Building target for drop points
-									If $value3 = 1 Or $value3 = 5 Then ; check for valid number of drop points
+									If $value3 > 0 Then ; check for valid number of drop points
 										Local $tmpArray = MakeTargetDropPoints(Eval($sidex), $value3, $value4, $value8)
 										If @error Then
 											$sErrorText = "MakeTargetDropPoints: " & @error ; set flag
@@ -149,6 +152,23 @@ Func ParseAttackCSV($debug = False)
 								debugAttackCSV($i & " - " & $pixel[0] & "," & $pixel[1])
 							Next
 						EndIf
+					Case "SWIPEAB"
+						ReleaseClicks()
+						If $g_iTotalAttackSlot > 10 Then
+							If $g_bDraggedAttackBar Then
+								SetLog("SWIPEAB: Swipe to 1st Page of attackbar.")
+								debugAttackCSV("SWIPEAB: Swipe to 1st Page of attackbar.")
+								DragAttackBar($g_iTotalAttackSlot, True) ; drag to 1st page
+							Else
+								SetLog("SWIPEAB: Swipe to 2nd Page of attackbar.")
+								debugAttackCSV("SWIPEAB: Swipe to 2nd Page of attackbar.")
+								DragAttackBar($g_iTotalAttackSlot, False)  ; drag to 2nd page
+							EndIf
+						Else
+							SetLog("Discard row: " & $iLine + 1 & ", SWIPEAB: You should have 11+ slot to use this command")
+							debugAttackCSV("Discard row: " & $iLine + 1 & ", SWIPEAB: You should have 11+ slot to use this command")
+						EndIf
+						If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
 					Case "DROP"
 						KeepClicks()
 						;index...
@@ -292,6 +312,7 @@ Func ParseAttackCSV($debug = False)
 						Else
 							; REMAIN CMD from @chalicucu | ProMac Updated
 							If $value4 = "REMAIN" Then
+								ReleaseClicks()
 								SetLog("Drop|Remain:  Dropping left over troops", $COLOR_BLUE)
 								; Let's get the troops again and quantities
 								If PrepareAttack($g_iMatchMode, True) > 0 Then
@@ -312,6 +333,22 @@ Func ParseAttackCSV($debug = False)
 											EndIf
 										Next
 									Next
+									; Loop on all detected troops And Check If Heroes Or Siege Was Not Dropped
+									For $i = 0 To UBound($g_avAttackTroops) - 1
+										Local $bFoundSpecialTroop = False
+										Local $iTroopKind = $g_avAttackTroops[$i][0]
+										If $iTroopKind = $eCastle Or $iTroopKind = $eWallW Or $iTroopKind = $eBattleB Or $iTroopKind = $eStoneS Then
+											$bFoundSpecialTroop = True
+										ElseIf ($iTroopKind = $eKing And Not $g_bDropKing) Or ($iTroopKind = $eQueen And Not $g_bDropQueen) Or ($iTroopKind = $eWarden And Not $g_bDropWarden) Then
+											$bFoundSpecialTroop = True
+										EndIf
+										If $bFoundSpecialTroop Then
+											Setlog("Name: " & NameOfTroop($iTroopKind, 0), $COLOR_DEBUG)
+											DropTroopFromINI($value1, $index1, $index2, $indexArray, $g_avAttackTroops[$i][1], $g_avAttackTroops[$i][1], GetTroopShortName($iTroopKind), $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $debug)
+											CheckHeroesHealth()
+											If _Sleep($DELAYALGORITHM_ALLTROOPS5) Then Return
+										EndIf
+									Next
 								EndIf
 							Else
 								DropTroopFromINI($value1, $index1, $index2, $indexArray, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $debug)
@@ -319,12 +356,8 @@ Func ParseAttackCSV($debug = False)
 						EndIf
 						ReleaseClicks($g_iAndroidAdbClicksTroopDeploySize)
 						If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
-						;set flag if warden was dropped and sleep after delay was to short for icon to update properly
-						If $value4 <> "REMAIN" Then
-							$iTroopIndex = TroopIndexLookup($value4, "ParseAttackCSV") ; obtain enum
-							$bWardenDrop = ($iTroopIndex = $eWarden) And ($sleepdrop1 < 1000)
-						EndIf
-					Case "WAIT"
+					Case "WAIT", "WFSTD", "WFTHD", "WFSTD-WFTHD", "WFTHD-WFSTD", "WFSTD&WFTHD", "WFTHD&WFSTD"
+						Local $hSleepTimer = __TimerInit() ; Initialize the timer at first
 						ReleaseClicks()
 						;sleep time
 						Local $sleep1, $sleep2, $sleepvect
@@ -338,7 +371,7 @@ Func ParseAttackCSV($debug = False)
 								$sleep2 = 1
 							EndIf
 						Else
-							If Int($value3) > 0 Then
+							If Int($value1) > 0 Then
 								$sleep1 = Int($value1)
 								$sleep2 = Int($value1)
 							Else
@@ -351,57 +384,149 @@ Func ParseAttackCSV($debug = False)
 						Else
 							Local $sleep = Int($sleep1)
 						EndIf
-						debugAttackCSV("wait " & $sleep)
-						;If _Sleep($sleep) Then Return
-						Local $Gold = 0
-						Local $Elixir = 0
-						Local $DarkElixir = 0
-						Local $Trophies = 0
-						Local $exitOneStar = 0
-						Local $exitTwoStars = 0
-						Local $exitNoResources = 0
-						Local $hSleepTimer = __TimerInit()
-						While __TimerDiff($hSleepTimer) < $sleep
-							CheckHeroesHealth()
-							;READ RESOURCES
-							$Gold = getGoldVillageSearch(48, 69)
-							$Elixir = getElixirVillageSearch(48, 69 + 29)
-							If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
-							$Trophies = getTrophyVillageSearch(48, 69 + 99)
-							If $Trophies <> "" Then ; If trophy value found, then base has Dark Elixir
-								$DarkElixir = getDarkElixirVillageSearch(48, 69 + 57)
-							Else
-								$DarkElixir = ""
-								$Trophies = getTrophyVillageSearch(48, 69 + 69)
-							EndIf
-							CheckHeroesHealth()
-							If $g_bDebugSetlog Then SetDebugLog("detected [G]: " & $Gold & " [E]: " & $Elixir & " [DE]: " & $DarkElixir, $COLOR_INFO)
-							;EXIT IF RESOURCES = 0
-							If $g_abStopAtkNoResources[$g_iMatchMode] And Number($Gold) = 0 And Number($Elixir) = 0 And Number($DarkElixir) = 0 Then
-								If Not $g_bDebugSetlog Then SetDebugLog("detected [G]: " & $Gold & " [E]: " & $Elixir & " [DE]: " & $DarkElixir, $COLOR_INFO) ; log if not down above
-								SetDebugLog("From Attackcsv: Gold & Elixir & DE = 0, end battle ", $COLOR_DEBUG)
-								$exitNoResources = 1
-								ExitLoop
-							EndIf
-							;CALCULATE TWO STARS REACH
-							If $g_abStopAtkTwoStars[$g_iMatchMode] And _CheckPixel($aWonTwoStar, True) Then
-								SetDebugLog("From Attackcsv: Two Star Reach, exit", $COLOR_SUCCESS)
-								$exitTwoStars = 1
-								ExitLoop
-							EndIf
-							;CALCULATE ONE STARS REACH
-							If $g_abStopAtkOneStar[$g_iMatchMode] And _CheckPixel($aWonOneStar, True) Then
-								SetDebugLog("From Attackcsv: One Star Reach, exit", $COLOR_SUCCESS)
-								$exitOneStar = 1
-								ExitLoop
-							EndIf
-							If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Int($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
-								ExitLoop
-							EndIf
-							If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
-						WEnd
-						If $exitOneStar = 1 Or $exitTwoStars = 1 Or $exitNoResources = 1 Then ExitLoop ;stop parse CSV file, start exit battle procedure
+						debugAttackCSV($command & " " & $sleep)
 
+						Local $bIsSiegeBreakCommand = False
+						Local $bIsThBreakCommand = False
+						Local $bIsThAndSiegeBreakCommand = False
+						Local $bIsEventWaitCommand = False
+						Local $iSiegeMachineSlotX = -1
+
+						;Check If Siege&Townhall Destory Condition Is Given
+						If StringInStr($command, "&") > 0 Then
+							If StringInStr($command, "WFSTD") > 0 And StringInStr($command, "WFTHD") > 0 Then
+								$bIsThAndSiegeBreakCommand = True
+							EndIf
+							;Check If Siege Or Townhall Destory Condition Is Given
+						ElseIf StringInStr($command, "-") > 0 Then
+							If StringInStr($command, "WFSTD") > 0 Then $bIsSiegeBreakCommand = True
+							If StringInStr($command, "WFTHD") > 0 Then $bIsThBreakCommand = True
+							;Check If Only Siege Destory Condition Is Given
+						ElseIf StringInStr($command, "WFSTD") > 0 Then
+							$bIsSiegeBreakCommand = True
+							;Check If Only Townhall Destory Condition Is Given
+						ElseIf StringInStr($command, "WFTHD") > 0 Then
+							$bIsThBreakCommand = True
+						EndIf
+						If $bIsSiegeBreakCommand Or $bIsThBreakCommand Or $bIsThAndSiegeBreakCommand Then $bIsEventWaitCommand = True
+
+						debugAttackCSV("$bIsSiegeBreakCommand = " & $bIsSiegeBreakCommand & ", $bIsThBreakCommand = " & $bIsThBreakCommand & ", $bIsThAndSiegeBreakCommand = " & $bIsThAndSiegeBreakCommand)
+						SetDebugLog("$bIsSiegeBreakCommand = " & $bIsSiegeBreakCommand & ", $bIsThBreakCommand = " & $bIsThBreakCommand & ", $bIsThAndSiegeBreakCommand = " & $bIsThAndSiegeBreakCommand, $COLOR_INFO)
+
+						If $bIsSiegeBreakCommand Or $bIsThAndSiegeBreakCommand Then
+							debugAttackCSV("WFSTD->Wait For Siege Troop Drop " & $sleep)
+							;Check if Siege is Available In Attackbar or not if not then no need to run this command
+							For $i = 0 To UBound($g_avAttackTroops) - 1
+								If $g_avAttackTroops[$i][0] = $eCastle Then
+									SetLog("WFSTD Command is for Siege Machine Only But Clan Castle Troop Found. Skip It!!", $COLOR_INFO)
+									ExitLoop
+								ElseIf $g_avAttackTroops[$i][0] = $eWallW Or $g_avAttackTroops[$i][0] = $eBattleB Or $g_avAttackTroops[$i][0] = $eStoneS Then
+									Local $sSiegeName = NameOfTroop($g_avAttackTroops[$i][0])
+									SetDebugLog("WFSTD Command Found " & $sSiegeName & " Let's Check If is Dropped Or Not?", $COLOR_SUCCESS)
+									;Check Siege Slot Quantity If It's 0 Means Siege Is Dropped
+									If ReadTroopQuantity($i) = 0 Then
+										SetDebugLog($sSiegeName & " is Dropped Let's check when troops will get dropped.", $COLOR_SUCCESS)
+										;Get Siege Machine Slot Starting X Will Use This X For Checking Slot Grayed Out or Not
+										$iSiegeMachineSlotX = GetXPosOfArmySlot($i) + 5
+									Else
+										SetDebugLog($sSiegeName & " is not dropped yet Skip this command.", $COLOR_SUCCESS)
+									EndIf
+									ExitLoop
+								EndIf
+							Next
+							;If Siege Was No Dropped
+							If $iSiegeMachineSlotX = -1 Then
+								;If Townhall+Siege destroy condtion was set, Set it to Townhall destroy only
+								If $bIsThAndSiegeBreakCommand Then
+									$bIsThAndSiegeBreakCommand = False
+									$bIsThBreakCommand = True
+								EndIf
+								$bIsSiegeBreakCommand = False
+							EndIf
+						EndIf
+						If $command = "WAIT" Or $bIsSiegeBreakCommand Or $bIsThBreakCommand Or $bIsThAndSiegeBreakCommand Then
+							Local $Gold = 0
+							Local $Elixir = 0
+							Local $DarkElixir = 0
+							Local $Trophies = 0
+							Local $exitOneStar = 0
+							Local $exitTwoStars = 0
+							Local $exitNoResources = 0
+							Local $exitAttackEnded = 0
+							Local $hResourceCheckDelayTimer = __TimerInit()
+							While __TimerDiff($hSleepTimer) < $sleep
+								;For Benchmark Purpose
+								;Local $hLoopWorkTimer = __TimerInit()
+								CheckHeroesHealth()
+								;For WFSTD Command Checking after delay function so in case troops dropped return ASAP
+								If $bIsSiegeBreakCommand And CheckIfSiegeDroppedTheTroops($hSleepTimer, $iSiegeMachineSlotX) Then
+									;Incase Of Event Commands Don't check Hero Ability In the End Of Code To Avoid Delay
+									$bCheckHeroAbility = False
+									ExitLoop
+								EndIf
+								;For WFTHD Command Checking after delay function so in case townhall destroyed return ASAP
+								If $bIsThBreakCommand And CheckIfTownHallGotDestroyed($hSleepTimer) Then
+									;Incase Of Event Commands Don't check Hero Ability In the End Of Code To Avoid Delay
+									$bCheckHeroAbility = False
+									ExitLoop
+								EndIf
+								;For WFSTD&WFTHD Command Checking after delay function so in case townhall&Siege destroyed return ASAP
+								If $bIsThAndSiegeBreakCommand And CheckIfSiegeDroppedTheTroops($hSleepTimer, $iSiegeMachineSlotX) And CheckIfTownHallGotDestroyed($hSleepTimer) Then
+									;Incase Of Event Commands Don't check Hero Ability In the End Of Code To Avoid Delay
+									$bCheckHeroAbility = False
+									ExitLoop
+								EndIf
+								;Incase of Event Command Event Command is more important then Exiting battle. So Check resouce after every 2 Sec When Command is WFSTD,WFTHD
+								If Not $bIsEventWaitCommand Or __TimerDiff($hResourceCheckDelayTimer) > 2000 Then
+									$hResourceCheckDelayTimer = __TimerInit()
+									;READ RESOURCES
+									$Gold = getGoldVillageSearch(48, 69)
+									$Elixir = getElixirVillageSearch(48, 69 + 29)
+									$Trophies = getTrophyVillageSearch(48, 69 + 99)
+									; If trophy value found, then base has Dark Elixir
+									If $Trophies <> "" Then
+										$DarkElixir = getDarkElixirVillageSearch(48, 69 + 57)
+									Else
+										$DarkElixir = ""
+										$Trophies = getTrophyVillageSearch(48, 69 + 69)
+									EndIf
+
+									If $g_bDebugSetlog Then SetDebugLog("detected [G]: " & $Gold & " [E]: " & $Elixir & " [DE]: " & $DarkElixir, $COLOR_INFO)
+									If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
+									;EXIT IF RESOURCES = 0
+									If $g_abStopAtkNoResources[$g_iMatchMode] And Number($Gold) = 0 And Number($Elixir) = 0 And Number($DarkElixir) = 0 Then
+										If Not $g_bDebugSetlog Then SetDebugLog("detected [G]: " & $Gold & " [E]: " & $Elixir & " [DE]: " & $DarkElixir, $COLOR_INFO) ; log if not down above
+										SetDebugLog("From Attackcsv: Gold & Elixir & DE = 0, end battle ", $COLOR_DEBUG)
+										$exitNoResources = 1
+										ExitLoop
+									EndIf
+									;CALCULATE TWO STARS REACH
+									If $g_abStopAtkTwoStars[$g_iMatchMode] And _CheckPixel($aWonTwoStar, True) Then
+										SetDebugLog("From Attackcsv: Two Star Reach, exit", $COLOR_SUCCESS)
+										$exitTwoStars = 1
+										ExitLoop
+									EndIf
+									;CALCULATE ONE STARS REACH
+									If $g_abStopAtkOneStar[$g_iMatchMode] And _CheckPixel($aWonOneStar, True) Then
+										SetDebugLog("From Attackcsv: One Star Reach, exit", $COLOR_SUCCESS)
+										$exitOneStar = 1
+										ExitLoop
+									EndIf
+									If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Int($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
+										ExitLoop
+									EndIf
+									If _CheckPixel($aEndFightSceneBtn, True) And _CheckPixel($aEndFightSceneAvl, True) And _CheckPixel($aEndFightSceneReportGold, True) Then
+										SetDebugLog("From Attackcsv: Found End Fight Scene to close, exit", $COLOR_SUCCESS)
+										$exitAttackEnded = 1
+										ExitLoop
+									EndIf
+								EndIf
+								;If $g_bDebugSetlog Then SetDebugLog("One Cycle of WAIT Loop Total Took : " & Round(__TimerDiff($hLoopWorkTimer), 2) & "ms", $COLOR_SUCCESS)
+								If _Sleep($DELAYRESPOND) Then Return     ; check for pause/stop
+							WEnd
+
+							If $exitOneStar = 1 Or $exitTwoStars = 1 Or $exitNoResources = 1 Or $exitAttackEnded = 1 Then ExitLoop     ;stop parse CSV file, start exit battle procedure
+						EndIf
 					Case "RECALC"
 						ReleaseClicks()
 						PrepareAttack($g_iMatchMode, True)
@@ -418,15 +543,10 @@ Func ParseAttackCSV($debug = False)
 			Else
 				If StringLeft($line, 7) <> "NOTE  |" And StringLeft($line, 7) <> "      |" And StringStripWS(StringUpper($line), 2) <> "" Then SetLog("attack row error, discard: row " & $iLine + 1, $COLOR_ERROR)
 			EndIf
-			If $bWardenDrop = True Then ;Check hero, but skip Warden if was dropped with sleepafter to short to allow icon update
-				Local $bHold = $g_bCheckWardenPower ; store existing flag state, should be true?
-				$g_bCheckWardenPower = False ;temp disable warden health check
-				CheckHeroesHealth()
-				$g_bCheckWardenPower = $bHold ; restore flag state
-			Else
-				CheckHeroesHealth()
-			EndIf
-			If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop after each line of CSV
+			;Incase Of Event Commands Don't check Hero Ability In the End Of Code To Avoid Delay
+			If $bCheckHeroAbility Then CheckHeroesHealth()
+
+			If _Sleep($DELAYRESPOND) Then Return     ; check for pause/stop after each line of CSV
 		Next
 		For $i = 0 To 3
 			If $sides2drop[$i] Then $g_iSidesAttack += 1
@@ -437,6 +557,38 @@ Func ParseAttackCSV($debug = False)
 	EndIf
 EndFunc   ;==>ParseAttackCSV
 
+;This Function is getting used FOR WFSTD Command to check if Siege Drooped The Troops
+Func CheckIfSiegeDroppedTheTroops($hSleepTimer, $iSiegeMachineSlotX)
+	;Check Gray Pixel When Siege IS Dead.
+	If _ColorCheck(_GetPixelColor($iSiegeMachineSlotX, 577, True, "IsSiegeDestroyed"), Hex(0x474747, 6), 10) Then
+		SetDebugLog("Siege Got Destroyed After " & Round(__TimerDiff($hSleepTimer)) & "ms", $COLOR_SUCCESS)
+		Return True
+	EndIf
+	Return False
+EndFunc   ;==>CheckIfSiegeDroppedTheTroops
+
+;This Function is getting used FOR WFTHD Command to check if Townhall is destroyed
+Func CheckIfTownHallGotDestroyed($hSleepTimer)
+	Local $bIsTHDestroyed = False
+	;Get Current Damge %
+	Local $iDamage = Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY))
+	;Check if got any star
+	Local $bWonOneStar = _CheckPixel($aWonOneStar, True)
+	Local $bWonTwoStar = _CheckPixel($aWonTwoStar, True)
+
+	;If Got 1 Star and Damage % < 50% then TH was taken before 50%
+	If $bWonOneStar And $iDamage < 50 Then
+		$bIsTHDestroyed = True
+		;If Got 2 Star and Damage % >= 50% then TH was taken after 50%
+	ElseIf $bWonTwoStar And $iDamage >= 50 Then
+		$bIsTHDestroyed = True
+	EndIf
+	SetDebugLog("WFTHD--> $iDamage: " & $iDamage & " | $bWonOneStar: " & $bWonOneStar & " | $bWonTwoStar: " & $bWonTwoStar & " | $bIsTHDestroyed: " & $bIsTHDestroyed, $COLOR_INFO)
+	If $bIsTHDestroyed Then SetDebugLog("Town Hall Got Destroyed After " & Round(__TimerDiff($hSleepTimer)) & "ms", $COLOR_SUCCESS)
+	Return $bIsTHDestroyed
+EndFunc   ;==>CheckIfTownHallGotDestroyed
+
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: ParseAttackCSV_MainSide
@@ -446,10 +598,10 @@ EndFunc   ;==>ParseAttackCSV
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: MMHK (07-2017)(01-2018), Demen (2019)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func ParseAttackCSV_MainSide($debug = False)
@@ -477,7 +629,7 @@ Func ParseAttackCSV_MainSide($debug = False)
 			$acommand = StringSplit($line, "|")
 			If $acommand[0] >= 8 Then
 				$command = StringStripWS(StringUpper($acommand[1]), $STR_STRIPTRAILING)
-				If $command <> "SIDE" And $command <> "SIDEB" Then ContinueLoop ; Only deal with SIDE and SIDEB commands
+				If $command <> "SIDE" And $command <> "SIDEB" Then ContinueLoop     ; Only deal with SIDE and SIDEB commands
 				; Set values
 				For $i = 2 To (UBound($acommand) - 1)
 					Assign("value" & Number($i - 1), StringStripWS(StringUpper($acommand[$i]), $STR_STRIPTRAILING))
@@ -496,7 +648,6 @@ Func ParseAttackCSV_MainSide($debug = False)
 
 
 							For $i = 0 To UBound($g_aiPixelMine) - 1
-								Local $str = ""
 								Local $pixel = $g_aiPixelMine[$i]
 								If UBound($pixel) = 2 Then
 									Switch StringLeft(Slice8($pixel), 1)
@@ -513,7 +664,6 @@ Func ParseAttackCSV_MainSide($debug = False)
 							Next
 
 							For $i = 0 To UBound($g_aiPixelElixir) - 1
-								Local $str = ""
 								Local $pixel = $g_aiPixelElixir[$i]
 								If UBound($pixel) = 2 Then
 									Switch StringLeft(Slice8($pixel), 1)
@@ -530,7 +680,6 @@ Func ParseAttackCSV_MainSide($debug = False)
 							Next
 
 							For $i = 0 To UBound($g_aiPixelDarkElixir) - 1
-								Local $str = ""
 								Local $pixel = $g_aiPixelDarkElixir[$i]
 								If UBound($pixel) = 2 Then
 									Switch StringLeft(Slice8($pixel), 1)
@@ -838,7 +987,7 @@ Func ParseAttackCSV_MainSide($debug = False)
 						SetLog("No 'SIDE' or 'SIDEB' csv line found, using default attack side: " & $MAINSIDE)
 				EndSwitch
 			EndIf
-		If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop after each line of CSV
+			If _Sleep($DELAYRESPOND) Then Return     ; check for pause/stop after each line of CSV
 		Next
 		ReleaseClicks()
 	Else

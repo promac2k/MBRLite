@@ -6,17 +6,16 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo (08-2015), KnowJack(10-2015), kaganus (10-2015), ProMac (04-2016), Codeslinger69 (01-2017), Fliegerfaust (11-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
 
 Func Collect($bCheckTreasury = True)
-	If Not $g_bChkCollect Then Return
-	If Not $g_bRunState Then Return
+	If Not $g_bChkCollect Or Not $g_bRunState Then Return
 
 	ClickP($aAway, 1, 0, "#0332") ;Click Away
 
@@ -121,11 +120,11 @@ Func CollectLootCart()
 			If _Sleep($DELAYCOLLECT1) Then Return
 
 			;Get LootCart info confirming the name
-			Local $sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+			Local $sInfo = BuildingInfo(242, 464) ; 860x780
 			If @error Then SetError(0, 0, 0)
 			Local $CountGetInfo = 0
 			While IsArray($sInfo) = False
-				$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+				$sInfo = BuildingInfo(242, 464) ; 860x780
 				If @error Then SetError(0, 0, 0)
 				If _Sleep($DELAYCOLLECT1) Then Return
 				$CountGetInfo += 1

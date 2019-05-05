@@ -6,10 +6,10 @@
 ; Return values .: True if boosted, False if not
 ; Author ........: Cosote Oct. 2016
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -21,7 +21,7 @@ Func BoostStructure($sName, $sOcrName, $aPos, ByRef $icmbBoostValue, $cmbBoostCt
 		BuildingClickP($aPos, "#0462")
 		If _Sleep($DELAYBOOSTHEROES2) Then Return
 		ForceCaptureRegion()
-		Local $aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+		Local $aResult = BuildingInfo(242, 464)
 		If $aResult[0] > 1 Then
 			Local $sN = $aResult[1] ; Store bldg name
 			Local $sL = $aResult[2] ; Sotre bdlg level
@@ -95,7 +95,7 @@ Func BoostPotion($sName, $sOcrName, $aPos, ByRef $icmbBoostValue, $cmbBoostCtrl)
 		BuildingClickP($aPos, "#0462")
 		If _Sleep($DELAYBOOSTHEROES2) Then Return
 		ForceCaptureRegion()
-		Local $aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+		Local $aResult = BuildingInfo(242, 464)
 		If $aResult[0] > 1 Then
 			Local $sN = $aResult[1] ; Store bldg name
 			Local $sL = $aResult[2] ; Sotre bdlg level

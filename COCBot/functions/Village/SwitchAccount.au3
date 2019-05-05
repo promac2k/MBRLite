@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: chalicucu (6-2016), demen (4-2017)
 ; Modified ......: NguyenAnhHD (12-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2015-2016
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -360,7 +360,6 @@ Func SwitchCOCAcc($NextAccount)
 		$iRetry = 0
 		$g_bReMatchAcc = False
 		$g_abIsToProccedWith[0] = True
-		$g_abIsToProccedWith[1] = True
 		ResetVariables("donated") ; reset for new account
 		$g_aiAttackedCountSwitch[$g_iCurAccount] = $g_aiAttackedCountAcc[$g_iCurAccount]
 		$g_iCurAccount = $NextAccount

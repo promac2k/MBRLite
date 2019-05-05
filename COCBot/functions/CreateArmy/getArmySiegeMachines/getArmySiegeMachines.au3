@@ -6,10 +6,10 @@
 ; Return values .:
 ; Author ........: Fliegerfaust(06-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -70,7 +70,7 @@ Func getArmySiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False, $
 
 			$aSiegeCoords = StringSplit($aTempSiegeArray[1], ",", $STR_NOCOUNT) ; Split the Coordinates where the Troop got found into X and Y
 
-			If $iSiegeIndex = -1 Then ContinueLoop
+			If $iSiegeIndex < 0 Then ContinueLoop
 
 			$g_aiCurrentSiegeMachines[$iSiegeIndex] = Number(getBarracksNewTroopQuantity(Slot($aSiegeCoords[0], $aSiegeCoords[1]), 196 + $g_iMidOffsetYNew, $bNeedCapture)) ; RC Done ; Get The Quantity of the Troop, Slot() Does return the exact spot to read the Number from
 

@@ -35,3 +35,27 @@ Func _ProcessSuspendResume2($iPIDorName, $iSuspend = True)
 	EndIf
 
 EndFunc   ;==>_ProcessSuspendResume2
+
+
+
+; Get process exit code from handle - used by AutoUpdateBOT
+Func _ProcessGetExitCode($hProc)
+    Local $t_ExitCode = DllStructCreate("int")
+    Local $avRET = DllCall("kernel32.dll", "int", "GetExitCodeProcess", "ptr", $hProc, "ptr", DllStructGetPtr($t_ExitCode))
+    If @error Then
+        Return SetError(1, 0, 0)
+    Else
+        Return DllStructGetData($t_ExitCode, 1)
+    EndIf
+EndFunc   ;==>_ProcessGetExitCode
+
+; Return handle of given PID - used by AutoUpdateBOT
+Func _ProcessGetHandle($iPID)
+    Local Const $PROCESS_QUERY_INFORMATION = 0x0400
+    Local $avRET = DllCall("kernel32.dll", "ptr", "OpenProcess", "int", $PROCESS_QUERY_INFORMATION, "int", 0, "int", $iPID)
+    If @error Then
+        Return SetError(1, 0, 0)
+    Else
+        Return $avRET[0]
+    EndIf
+EndFunc   ;==>_ProcessGetHandle

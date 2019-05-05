@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -37,7 +37,7 @@ Global $g_aiPixelBottomLeftDOWNDropLine
 Global $g_aiPixelBottomRightUPDropLine
 Global $g_aiPixelBottomRightDOWNDropLine
 
-Local $DeployableLRTB = [0, $g_iGAME_WIDTH - 1, 0, 540]
+Local $DeployableLRTB = [0, $g_iGAME_WIDTH - 1, 0, 529]; y=529 is a well protected value for attackbar
 Local $OuterDiamondLeft = 20, $OuterDiamondRight = 825, $OuterDiamondTop = 0, $OuterDiamondBottom = 614 ; set the diamond shape based on reference village
 Local $DiamondMiddleX = ($OuterDiamondLeft + $OuterDiamondRight) / 2
 Local $DiamondMiddleY = ($OuterDiamondTop + $OuterDiamondBottom) / 2
@@ -150,10 +150,10 @@ EndFunc   ;==>GetMaxPoint
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func Algorithm_AttackCSV($testattack = False, $captureredarea = True)
