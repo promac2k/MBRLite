@@ -1,5 +1,63 @@
+﻿* **Lite_v2.0.4**
+* Fixed Troops Train Time & Cost (April Update 2019)
+* Fixed Unable to locate buildings (April Update 2019)
+* Fixed Unable to boost clock tower (April Update 2019)
+* Fixed Suggested Upgrades button (April Update 2019)
+* Fixed Locate Upgrades button (April Update 2019)
+* Fixed Heroes Upgrades button (April Update 2019)
+* Fixed Loot Cart Collect button (April Update 2019)
+* Fixed Remove Obstacles button (April Update 2019)
+* Fixed Boost Button, Treasury, Research Button (April Update 2019)
+* Removed Rearm code not needed now (April Update 2019)
+* Improved & Fixed CSV Drop Points
+	NOTE: Advice to every CSV designer to test your CSV after this Update as they might need to adjust there drop indexes. See AttackCSVDebug Image For Reference
+* Added New CSV Command "WFTHD"-> Wait For Town Hall Destroy. it will help CSV designer to make warden ability timing better.
+* Added New CSV Command "SWIPEAB"-> Swipe Attackbar slots to left or right  beneficial for 11+ slot troops only.
+* Improved The use of WFSTD,WFTHD it can be used in different ways
+	"WFSTD-WFTHD", When used like this If Siege Destroyed Or Townhall Destroyed which happens first it will move on.
+	"WFSTD&WFTHD", When used like this Both Townhall And Siege needs be destroyed then it will move on.
+* Added Bot version check for new autoupdate engine
+* Added CSV scripts by Qandeel @qandeel.moh#0265 
+* Added Letter 'd' for reading days in personal break
+* Fixed The Slot 11+ drop issues,hero health issue reported by @Zeck & @qandeel.moh
+* Fixed Unable to boost Clocktower reported by @CoC
+* Fixed Autoupdate for bot running via Autoit reported by @Snkeyez951
+* Fixed SmartFarm related rare crash reported by @ZerGo0
+* Fixed Unable to detect Rate Never dialog was due to RC reported by @qandeel.moh
+* Fixed Unable to return home from clouds when p.b comes causing bot to restart game.
+* Fixed And Improved CSV Bottom Left & Bottom Right drop points which was causing spells to drop off sometime.
+* Fixed When Personal Break Time is 0s Bot won't go in PB due to bad OCR error reported by @DrToy
+* CSV clean up and added premium scripts by ZECK
+* Improved Th11,Th12 detection point to center now CSV Designer will have more control over where to drop spells on Th.
+	NOTE: You might need to review your drop points of Townhall after this update.
+* Improved Cloud Detection For Legends to fix some rare locate main screen search restart issue.
+* Improved Heroes Drop Detection Code to keep CSV Attack smooth
+* Improved Early PB Off For Legends as rule is for PB rule is different.
+* Improved Autoupdate bot by IceCube
+	NOTE: now support multi-instance
+
 * **Lite_v2.0.3**
-*
+* Added Portuguese Language Translation Done By @Ari#8556
+* Added New CSV Command "WFSTD"-> Wait For Siege Troop Drop this will open doors for CSV designer to make there csv rage,ability etc timing better.
+*		NOTE:"WFSTD" command will work only if Seige is dropped else it will show msg log and skip it.
+* Added Drop Heroes/Siege/CC By "REMAIN" command if were not dropped and allowed
+* Added Wall detection in CSV attack by @Demen, see BoWiHe v3.2.csv by @Zeck for details
+* Added support for doing chat for legend dark clouds without breaking clouds search helpful for non botting clans ;)
+* Added Autoupdate bot by IceCube
+*		NOTE: This feature is not valid for multi-instance BOT usage
+* Improved The CSV Buildings Drop points Now it can be Odd numbers 1,3,5... to move spells left or right. Detail info of use will be mentioned in post
+* Vectors Locations improved for Inferno. Inferno Vectors will now be near Townhall, regardless of the sides given.
+* Fixed And Improved Multi Detection Buildings Vector. Now Bot Will Select Unique Building Location If not found on requested side.
+* Fixed The Culprit behind choosing wrong building vector in CSV
+* Fixed Ice Golem Train Time
+* Fixed Unable to Switch Grand warden Mode
+* Fixed Unable to use Bat Spells When using all troops.
+* Fixed Unable to Drop trophies with Balloon and Wizard.
+* Fixed Unable to upgrade Heroes due to upgrade button not found. 
+* Fixed air defense,inferno,eagle templates detection issue
+* Fixed Builder Base Wall upgrade crash reported by @Rin
+* Fixed Builderbase Bot not attacking as unable to detect hero on upgrade tolerance changed for supporting 20fps reported by @Zeck
+* Some Minor improvements regarding pause Bot.
 
 * **Lite_v2.0.2**
 * Fixed Builder Base if all camps are empty the code couldn't filled / updated with correct troops

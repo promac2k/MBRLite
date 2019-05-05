@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........: didipe
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: NoNo
 ; ===============================================================================================================================
 Func _GetVectorOutZone($eVectorType)
@@ -48,9 +48,11 @@ Func _GetVectorOutZone($eVectorType)
 	For $i = 0 To $iSteps
 		Local $pixel = [Round($xMin + (($xMax - $xMin) * $i) / $iSteps), Round($yMin + (($yMax - $yMin) * $i) / $iSteps)]
 		ReDim $vectorOutZone[UBound($vectorOutZone) + 1]
-		If $pixel[1] > 555 + $g_iBottomOffsetY Then
-			$pixel[1] = 555 + $g_iBottomOffsetY
-		EndIf
+		;11-03-2019 We don't need this ATTACKBAR protection Vector code as we have "AttackClick" Function Protected because this cause issue with drop points.
+#CS 	If $pixel[1] > 555 + $g_iBottomOffsetY Then
+; 			$pixel[1] = 555 + $g_iBottomOffsetY
+; 		EndIf
+#CE
 		$vectorOutZone[UBound($vectorOutZone) - 1] = $pixel
 
 		; CS69 - $x and $y are never referenced in this function

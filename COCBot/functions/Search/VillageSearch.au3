@@ -7,10 +7,10 @@
 ; Author ........: Code Monkey #6
 ; Modified ......: kaganus (Jun/Aug 2015), Sardo 2015-07, KnowJack(Aug 2015) , The Master (2015), MonkeyHunter (02/08-2016),
 ;				   CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -82,6 +82,9 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 	EndIf
 
 	If $g_bIsSearchLimit = True Then $g_bIsSearchLimit = False
+
+	; reset page errors
+	InitAndroidPageError()
 
 	While 1 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;### Main Search Loop ###;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -398,6 +401,8 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 				Return
 			EndIf
 		WEnd
+		; See The Pending Actions Like ScreenShot cmd , Arg False => is not at Main Village
+		NotifyPendingActions(False)
 
 		If _Sleep($DELAYRESPOND) Then Return
 		$Result = getAttackDisable(346, 156) ; RC Done ; Grab Ocr for TakeABreak check

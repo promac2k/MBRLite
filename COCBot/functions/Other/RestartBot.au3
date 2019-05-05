@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: Cosote (Feb-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func RestartBot($bCloseAndroid = True, $bAutostart = True)
@@ -35,7 +35,7 @@ Func RestartBot($bCloseAndroid = True, $bAutostart = True)
 		_Sleep(1000)
 	EndIf
 	; Restart MultiBot
-	Local $pid = Run("cmd.exe /c start """" " & $sCmdLine, $g_sWorkingDir, @SW_HIDE) ; cmd.exe only used to support launch like "..\AutoIt3\autoit3.exe" from console
+	Local $pid = Run("cmd.exe /c start " & DoubleQuote("") & " " & $sCmdLine, $g_sWorkingDir, @SW_HIDE) ; cmd.exe only used to support launch like "..\AutoIt3\autoit3.exe" from console
 	If @error = 0 Then
 		SetLog("Restarting " & $g_sBotTitle)
 		; Wait 1 Minute to get closed
@@ -46,4 +46,4 @@ Func RestartBot($bCloseAndroid = True, $bAutostart = True)
 	EndIf
 
 	Return SetError(2, 0, False)
-EndFunc   ;==>_Restart
+EndFunc   ;==>RestartBot

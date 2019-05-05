@@ -6,10 +6,10 @@
 ; Return values .:
 ; Author ........: KnowJack (April-2015)
 ; Modified ......: KnowJack (Jun/Aug-2015),Sardo 2015-08,Monkeyhunter(2106-2)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -206,21 +206,15 @@ Func UpgradeBuilding()
 EndFunc   ;==>UpgradeBuilding
 ;
 Func UpgradeNormal($inum)
-
-	Local $aResult, $ButtonPixel
-
 	ClickP($aAway, 1, 0, "#0211") ;Click Away to close the upgrade window
 	If _Sleep($DELAYUPGRADENORMAL1) Then Return
 
 	BuildingClick($g_avBuildingUpgrades[$inum][0], $g_avBuildingUpgrades[$inum][1], "#0296") ; Select the item to be upgrade
 	If _Sleep($DELAYUPGRADENORMAL1) Then Return ; Wait for window to open
 
-	$aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; read building name/level to check we have right bldg or if collector was not full
+	Local $aResult = BuildingInfo(242, 464) ; read building name/level to check we have right bldg or if collector was not full
 
-	If UBound($aResult) < 2 Then
-		; bot stopped
-		Return False
-	EndIf
+	If UBound($aResult) < 2 Then Return False
 	If StringStripWS($aResult[1], BitOR($STR_STRIPLEADING, $STR_STRIPTRAILING)) <> StringStripWS($g_avBuildingUpgrades[$inum][4], BitOR($STR_STRIPLEADING, $STR_STRIPTRAILING)) Then ; check bldg names
 
 		SetLog("#" & $inum + 1 & ":" & $g_avBuildingUpgrades[$inum][4] & ": Not same as :" & $aResult[1] & ":? Retry now...", $COLOR_INFO)
@@ -230,7 +224,7 @@ Func UpgradeNormal($inum)
 		BuildingClick($g_avBuildingUpgrades[$inum][0], $g_avBuildingUpgrades[$inum][1], "#0296") ; Select the item to be upgrade again in case full collector/mine
 		If _Sleep($DELAYUPGRADENORMAL1) Then Return ; Wait for window to open
 
-		$aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; read building name/level to check we have right bldg or if collector was not full
+		$aResult = BuildingInfo(242, 464) ; read building name/level to check we have right bldg or if collector was not full
 		If $aResult[0] > 1 Then
 			If StringStripWS($aResult[1], BitOR($STR_STRIPLEADING, $STR_STRIPTRAILING)) <> StringStripWS($g_avBuildingUpgrades[$inum][4], BitOR($STR_STRIPLEADING, $STR_STRIPTRAILING)) Then ; check bldg names
 				SetLog("Found #" & $inum + 1 & ":" & $g_avBuildingUpgrades[$inum][4] & ": Not same as : " & $aResult[1] & ":, May need new location?", $COLOR_ERROR)
@@ -239,18 +233,16 @@ Func UpgradeNormal($inum)
 		EndIf
 	EndIf
 
-	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 630+ $g_iBottomOffsetYNew, 740, 680+ $g_iBottomOffsetYNew) Then ; RC Done
-		Local $ButtonPixel[2]
-		$ButtonPixel[0] = $g_iQuickMISWOffSetX
-		$ButtonPixel[1] =$g_iQuickMISWOffSetY
-		If $g_bDebugSetlog Then SetLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG)
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
+
+		If $g_bDebugSetlog Then SetLog("Upgrade Button Found At = " & $g_iQuickMISWOffSetX & ", " & $g_iQuickMISWOffSetY, $COLOR_DEBUG)
 
 		If _Sleep($DELAYUPGRADENORMAL2) Then Return
-		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0297") ; Click Upgrade Button
+		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0297") ; Click Upgrade Button
 		If _Sleep($DELAYUPGRADENORMAL3) Then Return ; Wait for window to open
 		If $g_bDebugImageSave Then DebugImageSave("UpgradeRegBtn1")
 		Local $aBldgUpgradeWinChk[4] = [687, 161 + $g_iMidOffsetY, 0xCD1419, 20] ; Red pixel on botton X to close window
-		If _WaitForCheckPixel($aBldgUpgradeWinChk, $g_bCapturePixel,Default, "BldgUpgradeWinChk", Default, Default, 100) Then ; wait up to 2 seconds for hero upgrade window to open
+		If _WaitForCheckPixel($aBldgUpgradeWinChk, $g_bCapturePixel, Default, "BldgUpgradeWinChk", Default, Default, 100) Then ; wait up to 2 seconds for hero upgrade window to open
 			If _ColorCheck(_GetPixelColor(459, 490 + $g_iMidOffsetY, True), Hex(0xE70A12, 6), 20) And _ColorCheck(_GetPixelColor(459, 494 + $g_iMidOffsetY), Hex(0xE70A12, 6), 20) And _
 					_ColorCheck(_GetPixelColor(459, 498 + $g_iMidOffsetY, True), Hex(0xE70A12, 6), 20) Then ; Check for Red Zero = means not enough loot!
 
@@ -342,25 +334,21 @@ Func UpgradeNormal($inum)
 		Return False
 	EndIf
 EndFunc   ;==>UpgradeNormal
-;
+
 Func UpgradeHero($inum)
-	Local $ButtonPixel
 
 	BuildingClick($g_avBuildingUpgrades[$inum][0], $g_avBuildingUpgrades[$inum][1], "#0304") ; Select the item to be upgrade
 	If _Sleep($DELAYUPGRADEHERO1) Then Return ; Wait for window to open
 
-	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 630+ $g_iBottomOffsetYNew, 740, 680+ $g_iBottomOffsetYNew) Then ; RC Done
-		Local $ButtonPixel[2]
-		$ButtonPixel[0] = $g_iQuickMISWOffSetX
-		$ButtonPixel[1] = $g_iQuickMISWOffSetY
-		If $g_bDebugSetlog Then SetLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG)
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
+		If $g_bDebugSetlog Then SetLog("Upgrade Button Found At = " & $g_iQuickMISWOffSetX & ", " & $g_iQuickMISWOffSetY, $COLOR_DEBUG)
 
 		If _Sleep($DELAYUPGRADEHERO2) Then Return
-		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0305") ; Click Upgrade Button
+		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0305") ; Click Upgrade Button
 		If _Sleep($DELAYUPGRADEHERO3) Then Return ; Wait for window to open
 		If $g_bDebugImageSave Then DebugImageSave("UpgradeDarkBtn1")
 		Local $aHeroUpgradeWinChk[4] = [729, 128 + $g_iMidOffsetY, 0xCD161D, 20] ; Red pixel on botton X to close window
-		If _WaitForCheckPixel($aHeroUpgradeWinChk, $g_bCapturePixel,Default, "HeroUpgradeWinChk", Default, Default, 100) Then ; wait up to 2 seconds for hero upgrade window to open
+		If _WaitForCheckPixel($aHeroUpgradeWinChk, $g_bCapturePixel, Default, "HeroUpgradeWinChk", Default, Default, 100) Then ; wait up to 2 seconds for hero upgrade window to open
 			If _ColorCheck(_GetPixelColor(691, 523 + $g_iMidOffsetY, True), Hex(0xE70A12, 6), 20) And _ColorCheck(_GetPixelColor(691, 527 + $g_iMidOffsetY), Hex(0xE70A12, 6), 20) And _
 					_ColorCheck(_GetPixelColor(691, 531 + $g_iMidOffsetY, True), Hex(0xE70A12, 6), 20) Then ; Check for Red Zero = means not enough loot!
 				SetLog("Hero Upgrade Fail #" & $inum + 1 & " " & $g_avBuildingUpgrades[$inum][4] & " No DE!", $COLOR_ERROR)

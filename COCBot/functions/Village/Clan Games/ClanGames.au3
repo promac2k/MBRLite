@@ -725,8 +725,8 @@ Func ClanGamesChallenges($sReturnArray, $makeIni = False, $sINIPath = "", $debug
 			["Ball", 					"Balloon", 						 4, 12, 1], _ ; Earn 2-5 Stars from Multiplayer Battles using 12 Balloons		|3h-8h	|40-100
 			["Drag", 					"Dragon", 						 7,  6, 1], _ ; Earn 2-5 Stars from Multiplayer Battles using 6 Dragons			|3h-8h	|40-100
 			["BabyD", 					"BabyDragon", 					 9,  4, 1], _ ; Earn 2-5 Stars from Multiplayer Battles using 4 Baby Dragons	|3h-8h	|40-100
-			["Lava", 					"ElectroDragon", 				10,  2, 1], _ ; Earn 2-4 Stars from Multiplayer Battles using 2 Electro Dragon	|3h-8h	|40-300
-			["Edrag", 					"Lavahound", 					 9,  3, 1]]   ; Earn 2-5 Stars from Multiplayer Battles using 3 Lava Hounds		|3h-8h	|40-100
+			["Lava", 					"Lavahound", 					 9,  3, 1], _ ; Earn 2-4 Stars from Multiplayer Battles using 2 Lava Hounds  	|3h-8h	|40-300
+			["Edrag", 					"ElectroDragon", 				10,  2, 1]]   ; Earn 2-5 Stars from Multiplayer Battles using 3 Electro Dragon	|3h-8h	|40-100
 
 	Local $GroundTroopChallenges[14][5] = [ _
 			["Arch", 					"Archer", 						 1, 30, 1], _ ; Earn 2-5 Stars from Multiplayer Battles using 30 Barbarians		|3h-8h	|40-100
@@ -852,7 +852,7 @@ Func ClanGamesChallenges($sReturnArray, $makeIni = False, $sINIPath = "", $debug
 		Local $File = FileOpen($LocalINI, $FO_APPEND)
 		Local $HelpText = "; - MultiBotRun 2018 - " & @CRLF & _
 				"; - 'Event name' = 'Priority' [1~5][easiest to the hardest] , '0' to disable the event" & @CRLF & _
-				"; - Remember on GUI you can enable/disable an entire Section" & @CRLF & _
+				"; - Remember on GUI you can enable"&$FORWARD_SLASH&"disable an entire Section" & @CRLF & _
 				"; - Do not change any event name" & @CRLF & _
 				"; - Deleting this file will restore the defaults values." & @CRLF & @CRLF
 		FileWrite($File, $HelpText)

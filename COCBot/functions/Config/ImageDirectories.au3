@@ -4,14 +4,15 @@
 ; Syntax ........: $g_sImgxxx = @ScriptDir & "\imgxml\xxx\"
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
 Global $g_sImgImgLocButtons = @ScriptDir & "\imgxml\imglocbuttons"
+Global $g_sImgImgLocOkay = @ScriptDir & "\imgxml\imglocbuttons\Okay\"
 
 #Region Obstacles
 Global Const $g_sImgAnyoneThere = @ScriptDir & "\imgxml\other\AnyoneThere[[Android]]*"
@@ -30,7 +31,6 @@ Global Const $g_sImgNotice = @ScriptDir & "\imgxml\other\Notice*"
 Global $g_sImgCollectRessources = @ScriptDir & "\imgxml\Resources\Collect"
 Global Const $g_sImgCollectLootCart = @ScriptDir & "\imgxml\Resources\LootCart\imgloc\LootCart_0_85.xml"
 Global Const $g_sImgCollectNewLootCart = @ScriptDir & "\imgxml\Resources\LootCart\new"
-Global $g_sImgRearm = @ScriptDir & "\imgxml\rearm"
 Global $g_sImgBoat = @ScriptDir & "\imgxml\Boat\BoatNormalVillage_0_89.xml"
 Global $g_sImgZoomOutDir = @ScriptDir & "\imgxml\village\NormalVillage\" ;Backslash '\' at the end of path is important
 Global $g_sImgCheckWallDir = @ScriptDir & "\imgxml\Walls"

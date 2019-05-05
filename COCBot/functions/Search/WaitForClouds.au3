@@ -7,17 +7,17 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (08-2016)
 ; Modified ......: MonkeyHunter (05-2017) MMHK (07-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func WaitForClouds()
 
 	If $g_bDebugSetlog Then SetDebugLog("Begin WaitForClouds:", $COLOR_DEBUG1)
 	$g_bCloudsActive = True
-	
+
 	Local $iCount = 0
 	Local $bigCount = 0, $iLastTime = 0
 	Local $hMinuteTimer, $iSearchTime
@@ -107,6 +107,8 @@ Func WaitForClouds()
 				SetLog("Enabled bot controls due to long wait time", $COLOR_SUCCESS)
 				$bEnabledGUI = True
 			EndIf
+			; See The Pending Actions Like ScreenShot cmd , Arg False => is not at Main Village
+			NotifyPendingActions(False)
 		EndIf
 		If Not $g_bRunState Then ExitLoop
 		ForceCaptureRegion() ; ensure screenshots are not cached
@@ -153,8 +155,14 @@ Func EnableLongSearch()
 			If chkAttackSearchFail() = 1 Then Return True ; OCR text for search fail message, and press retry if available, success continue searching
 			Return False
 		Else
-			Local $KeepAlive[2] = [430, 351 + $g_iMidOffsetY]
-			ClickP($KeepAlive, 1, 0, "#0514") ; click on text just to keep game alive
+			;Check if someone doing chat in clouds while long clouds click on Chat Tab Black Portion aoivd to interrupt user chatbox to gone
+			If _ColorCheck(_GetPixelColor($aChatTab[0], $aChatTab[1], True, "IsChatOpenInClouds"), Hex($aChatTab[2], 6), $aChatTab[3]) And _
+					_ColorCheck(_GetPixelColor($aChatTab2[0], $aChatTab2[1], True, "IsChatOpenInClouds2"), Hex($aChatTab2[2], 6), $aChatTab2[3]) Then
+				Click(300, 30, 1, 0, "Keep Alive Chat") ; click on chat black spot to just to keep game alive
+			Else
+				Click(Random(264, 575, 1), Random(339, 355, 1), 1, 0, "Keep Alive") ; click on "Searching For Opponenets.."text just to keep game alive
+			EndIf
+
 		EndIf
 
 		; Small delay
@@ -167,10 +175,15 @@ Func EnableLongSearch()
 EndFunc   ;==>EnableLongSearch
 
 Func chkSearchText()
-	; boolean 50-60ms OCR check for yellow text "Searching for oponents..." message that appears during attack search with long cloud times
+	; boolean 50-60ms OCR check for yellow text "Searching for opponents..." message that appears during attack search with long cloud times
 	Local $result
-	$result = getCloudTextShort(388, 348 + $g_iMidOffsetY, "Cloud Search Text: for=", $COLOR_DEBUG, Default) ; OCR "Searching for oponents..." text
+	$result = getCloudTextShort(388, 348 + $g_iMidOffsetY, "Cloud Search Text: for=", $COLOR_DEBUG, Default) ; OCR "Searching for opponents..." text
 	If $result <> "" And StringInStr($result, "for", $STR_NOCASESENSEBASIC) <> 0 Then ; found "for" characters in text?
+		Return True
+	EndIf
+	;Just in very rare case "for" is not read correctly due to moving magnifying glass so check other text opp
+	$result = getCloudTextShort(438, 348 + $g_iMidOffsetY, "Cloud Search Text: opp=", $COLOR_DEBUG, Default) ; OCR "Searching for opponents..." text
+	If $result <> "" And StringInStr($result, "opp", $STR_NOCASESENSEBASIC) <> 0 Then ; found "opp" characters in text?
 		Return True
 	EndIf
 	Return False
@@ -179,9 +192,21 @@ EndFunc   ;==>chkSearchText
 Func chkAttackSearchFail()
 	; boolean 50-60ms OCR check for pink text "unable to find villages to attack!" error message during search for base to attack
 	If _Sleep($DELAYCLOUDSCLEARED) Then Return ; add delay as buying time for OCR text to disappear when retry btn pressed
+	Local $bCloudFailTextFound = False
 	Local $result
 	$result = getCloudFailShort(271, 351 + $g_iMidOffsetY, "Cloud Search Fail Text: unable=", $COLOR_DEBUG, Default)
-	If $result <> "" And StringInStr($result, "unable", $STR_NOCASESENSEBASIC) > 0 Then ; found "unable" characters in text
+	If $result <> "" And StringInStr($result, "unable", $STR_NOCASESENSEBASIC) > 0 Then     ; found "unable" characters in text
+		$bCloudFailTextFound = True
+	EndIf
+	;Just in very rare case "unable" is not read correctly due to moving magnifying glass got stopped on unable text so check other text find
+	If Not $bCloudFailTextFound Then
+		$result = getCloudFailShort(370, 351 + $g_iMidOffsetY, "Cloud Search Fail Text: find=", $COLOR_DEBUG, Default)
+		If $result <> "" And (StringInStr($result, "find", $STR_NOCASESENSEBASIC) > 0 Or StringInStr($result, "tind", $STR_NOCASESENSEBASIC) > 0) Then ; found "find" characters in text some time f is detecting as t
+			$bCloudFailTextFound = True
+		EndIf
+	EndIf
+
+	If $bCloudFailTextFound Then
 		If btnSearchFailRetry() = True Then ; if press retry button is success, then keep searching
 			SetLog("Search Fail? Retry search button pushed, continue...", $COLOR_SUCCESS)
 			Return 1
@@ -214,7 +239,7 @@ Func chkAttackSearchPersonalBreak()
 EndFunc   ;==>chkAttackSearchPersonalBreak
 
 Func btnSearchFailRetry()
-	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Clouds", 270, 400+ $g_iMidOffsetYNew, 600, 500+ $g_iMidOffsetYNew) Then ; RC Done
+	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Clouds", 270, 400 + $g_iMidOffsetYNew, 600, 500 + $g_iMidOffsetYNew) Then ; RC Done
 		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0512")
 		Return True
 	EndIf

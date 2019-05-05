@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: AtoZ (2015)
 ; Modified ......: Barracoda (07-2015), TheMaster1st (10-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ================================================================
 
@@ -55,7 +55,7 @@ Func AttackTHParseCSV($test = False)
 					Case $command = "TROOP" Or $command = ""
 						;SetLog("<<<<discard line>>>>")
 					Case $command = "TEXT"
-						If $g_bDebugSetlog Then SetDebugLog(">> SETLOG(""" & $acommand[8] & """)")
+						If $g_bDebugSetlog Then SetDebugLog(">> SETLOG(" & DoubleQuote( $acommand[8]) & ")")
 
 						SetLog($acommand[8], $COLOR_INFO)
 
@@ -110,7 +110,7 @@ Func AttackTHParseCSV($test = False)
 						SetLog("attack row bad, discard: " & $line, $COLOR_ERROR)
 				EndSelect
 				If $acommand[8] <> "" And $command <> "TEXT" And $command <> "TROOP" Then
-					If $g_bDebugSetlog Then SetDebugLog(">> SETLOG(""" & $acommand[8] & """)")
+					If $g_bDebugSetlog Then SetDebugLog(">> SETLOG(" & DoubleQuote( $acommand[8]) & ")")
 					SETLOG($acommand[8], $COLOR_INFO)
 				EndIf
 			Else

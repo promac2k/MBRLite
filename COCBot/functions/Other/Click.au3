@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: (2014)
 ; Modified ......: HungLe (may-2015) Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......: checkMainscreen, isProblemAffect
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -213,14 +213,14 @@ Func AttackClick($x, $y, $times = 1, $speed = 0, $afterDelay = 0, $debugtxt = ""
 	Local $timer = __TimerInit()
 	If $g_bDebugSetlog Then SetDebugLog("Before AttackClick (x,y)=(" & $x & "," & $y & ")")
 	; Protect the Attack Bar
-	If $y > 520 And $x > $DiamondMiddleX - 80 And $x < $DiamondMiddleX Then
-		$y = 535
-		$x = $DiamondMiddleX - 80
-	ElseIf $y > 520 And $x >= $DiamondMiddleX And $x < $DiamondMiddleX + 80 Then
-		$y = 535
-		$x = $DiamondMiddleX + 80
-	ElseIf $y > 520 And ($x < $DiamondMiddleX - 80 Or $x > $DiamondMiddleX + 80) Then
-		$y = 535
+	If $y > 529 And $x > $DiamondMiddleX - 60 And $x < $DiamondMiddleX Then
+		$y = 529
+		$x = $DiamondMiddleX - 60
+	ElseIf $y > 529 And $x >= $DiamondMiddleX And $x < $DiamondMiddleX + 60 Then
+		$y = 529
+		$x = $DiamondMiddleX + 60
+	ElseIf $y > 529 And ($x <= $DiamondMiddleX - 60 Or $x >= $DiamondMiddleX + 60) Then
+		$y = 529
 	EndIf
 	If $g_bDebugSetlog Then SetDebugLog("After Protect AttackClick (x,y)=(" & $x & "," & $y & ")")
 	AttackRemainingTime(False) ; flag attack started
@@ -367,19 +367,6 @@ Func _DecodeDebug($message)
 			Return $separator & "Profile - Profile Button"
 		Case "#0223"
 			Return $separator & "Profile - Close Page"
-			;REARM
-		Case "#0225"
-			Return $separator & "Rearm - Click Town Hall"
-		Case "#0326", "#0228"
-			Return $separator & "Rearm - Click Rearm Button"
-		Case "#0226", "#0229"
-			Return $separator & "Rearm - Click Rearm"
-		Case "#0227", "#0230", "#0233"
-			Return $separator & "Rearm - Close Gem Spend Window"
-		Case "#0231"
-			Return $separator & "Rearm - Click Inferno Button"
-		Case "#0232"
-			Return $separator & "Rearm - Inferno Button"
 			;REQUEST CC
 		Case "#0250"
 			Return $separator & "Request - Click Castle Clan"

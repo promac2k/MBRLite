@@ -6,16 +6,16 @@
 ; Return values .:
 ; Author ........: Fliegerfaust(06-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
 Func getArmyCCSiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False, $bCheckWindow = False, $bSetLog = True, $bNeedCapture = True)
 
-	If $g_bDebugSetlogTrain Then SetLog("getArmySiegeMachines():", $COLOR_DEBUG)
+	If $g_bDebugSetlogTrain Then SetLog("getArmyCCSiegeMachines():", $COLOR_DEBUG)
 
 	If $g_iTownHallLevel < 10 Then Return
 
@@ -25,7 +25,7 @@ Func getArmyCCSiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False,
 			Return ; not open, not requested to be open - error.
 		EndIf
 	ElseIf $bOpenArmyWindow Then
-		If Not OpenArmyOverview(True, "getArmySiegeMachines()") Then
+		If Not OpenArmyOverview(True, "getArmyCCSiegeMachines()") Then
 			SetError(2)
 			Return ; not open, requested to be open - error.
 		EndIf
@@ -62,7 +62,7 @@ Func getArmyCCSiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False,
 
 			$aCCSiegeCoords = StringSplit($aTempCCSiegeArray[1], ",", $STR_NOCOUNT) ; Split the Coordinates where the Troop got found into X and Y
 
-			If $iCCSiegeIndex = -1 Then ContinueLoop
+			If $iCCSiegeIndex < 0 Then ContinueLoop
 
 			$g_aiCurrentCCSiegeMachines[$iCCSiegeIndex] = Number(getBarracksNewTroopQuantity(650, 498 + $g_iMidOffsetYNew, $bNeedCapture)) ; RC Done ; Get The Quantity of the Troop, Slot() Does return the exact spot to read the Number from
 

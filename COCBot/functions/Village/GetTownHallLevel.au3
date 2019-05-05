@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: KNowJack (July 2015)
 ; Modified ......: Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func GetTownHallLevel($bFirstTime = False)
@@ -31,7 +31,7 @@ Func GetTownHallLevel($bFirstTime = False)
 	If $g_bDebugImageSave Then DebugImageSave("GetTHLevelView")
 
 	$g_iTownHallLevel = 0 ; Reset Townhall level
-	$aTHInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+	$aTHInfo = BuildingInfo(242, 464)
 	If $g_bDebugSetlog Then SetDebugLog("$aTHInfo[0]=" & $aTHInfo[0] & ", $aTHInfo[1]=" & $aTHInfo[1] & ", $aTHInfo[2]=" & $aTHInfo[2], $COLOR_DEBUG)
 	If $aTHInfo[0] > 1 Then
 		If StringInStr($aTHInfo[1], "Town") = 0 Then
@@ -71,7 +71,7 @@ Func VerifyAndClickTownHall($bCloseTownhallInfo = False)
 	If _Sleep($DELAYGETTHLEVEL3) Then Return
 	If IsMainPage() Then BuildingClickP($g_aiTownHallPos, "#0350")
 	If _Sleep($DELAYGETTHLEVEL2) Then Return
-	$aTHInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+	$aTHInfo = BuildingInfo(242, 464)
 
 	If $g_bDebugSetlog Then SetDebugLog("$aTHInfo[0]=" & $aTHInfo[0] & ", $aTHInfo[1]=" & $aTHInfo[1] & ", $aTHInfo[2]=" & $aTHInfo[2], $COLOR_DEBUG)
 	;Check If Townhall Found

@@ -4,10 +4,10 @@
 ; Syntax ........: $g_sImgxxx = @ScriptDir & "\imgxml\BuildersBase\xxx\"
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -81,7 +81,7 @@ Global Const $g_aBundleCleanYardBBParms[3] = [0, "0,50,860,594", False] ; RC Don
 #EndRegion Clean Yard
 
 #Region Check Army Builder Base
-Global Const $aArmyTrainButtonBB[4] = [46, 572+ $g_iBottomOffsetYNew, 0xE5A439, 10] ; RC Done
+Global Const $g_aArmyTrainButtonBB[4] = [46, 572+ $g_iBottomOffsetYNew, 0xE5A439, 10] ; RC Done
 Global Const $g_sImgPathFillArmyCampsWindow = @ScriptDir & "\imgxml\BuildersBase\FillArmyCamps\Window"
 Global Const $g_aBundlePathCamps[3] = [1000, "0,301,860,40", True] ; RC Done ; [0] Quantity2Match [1] Area2Search [2] ForceArea
 Global Const $g_sImgPathCamps = @ScriptDir & "\imgxml\BuildersBase\Bundles\Camps\Camps.DocBundle"

@@ -3,10 +3,10 @@
 ; Description ...:
 ; Author ........: SpartanUBPT
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -44,15 +44,16 @@ Func WallsUpgradeBB()
 		Local $hStarttime = _Timer_Init()
 
 		; Wall search level, 0 is not a level , this is the selected level to upgrade
-		Local $BBWallLevel = $g_iCmbBBWallLevel + 1
+		Local $iBBWallLevel = $g_iCmbBBWallLevel + 1
+		; $iBBWallLevel + 1 will be correct values for the next level
+		Local $iBBNextLevelCost = $g_aiWallBBInfoPerLevel[$iBBWallLevel + 1][1]
 
-		; $BBWallLevel + 1 will be correct values for the next level
-		SetDebugLog("Wall(s) to search lv " & $BBWallLevel)
-		SetDebugLog("Level " & $BBWallLevel + 1 & " value: " & $g_aiWallBBInfoPerLevel[$BBWallLevel + 1][1] & " Current Gold: " & $g_aiCurrentLootBB[$eLootGoldBB])
+		SetDebugLog("Wall(s) to search lvl " & $iBBWallLevel)
+		SetDebugLog("Level " & $iBBWallLevel + 1 & " value: " & $iBBNextLevelCost & " Current Gold: " & $g_aiCurrentLootBB[$eLootGoldBB])
 
-		If $g_iFreeBuilderCountBB > 0 And $g_bChkBBUpgradeWalls = True And Number($g_aiCurrentLootBB[$eLootGoldBB]) > $g_aiWallBBInfoPerLevel[$BBWallLevel + 1][1] Then
+		If $g_iFreeBuilderCountBB > 0 And $g_bChkBBUpgradeWalls = True And Number($g_aiCurrentLootBB[$eLootGoldBB]) > $iBBNextLevelCost Then
 			; Reurn an Array [xx][0] = Name , [xx][1] = Xaxis , [xx][2] = Yaxis , [xx][3] = Level
-			Local $WallsBBNXY = _ImageSearchBundlesMultibot($g_sBundleWallsBB, $g_aBundleWallsBBParms[0], $g_aBundleWallsBBParms[1], $g_aBundleWallsBBParms[2], $g_bDebugBBattack, True, "10", $BBWallLevel)
+			Local $WallsBBNXY = _ImageSearchBundlesMultibot($g_sBundleWallsBB, $g_aBundleWallsBBParms[0], $g_aBundleWallsBBParms[1], $g_aBundleWallsBBParms[2], $g_bDebugBBattack, True, "10", $iBBWallLevel)
 			If $g_bDebugSetlog Then SetDebugLog("Image Detection for Walls in Builder Base : " & Round(_Timer_Diff($hStarttime), 2) & "'ms")
 			If IsArray($WallsBBNXY) And UBound($WallsBBNXY) > 0 Then
 				SetDebugLog("Total Walls Found: " & UBound($WallsBBNXY))
@@ -60,15 +61,19 @@ Func WallsUpgradeBB()
 					If $g_bDebugSetlog Then SetDebugLog($WallsBBNXY[$i][0] & " found at (" & $WallsBBNXY[$i][1] & "," & $WallsBBNXY[$i][2] & ")", $COLOR_SUCCESS)
 					If IsMainPageBuilderBase() Then Click($WallsBBNXY[$i][1], $WallsBBNXY[$i][2], 1, 0, "#902") ; Click in Wall
 					If _Sleep($DELAYCOLLECT3) Then Return
-					Local $aResult = BuildingInfo(245, 520 + $g_iBottomOffsetY) ; Get building name and level with OCR
+					Local $aResult = BuildingInfo(245, 464) ; Get building name and level with OCR
 					If $aResult[0] = 2 Then ; We found a valid building name
-						If StringInStr($aResult[1], "wall") = True And Number($aResult[2]) = $BBWallLevel Then ; we found a wall
-							SetLog("Position : " & $WallsBBNXY[$i][1] & ", " & $WallsBBNXY[$i][2] & " is a Wall Level: " & $BBWallLevel & ".")
+						If StringInStr($aResult[1], "wall") = True And Number($aResult[2]) = $iBBWallLevel Then ; we found a wall
+							SetLog("Position : " & $WallsBBNXY[$i][1] & ", " & $WallsBBNXY[$i][2] & " is a Wall Level: " & $iBBWallLevel & ".")
 							If IsMainPageBuilderBase() Then Click($aWallUpgrade[0], $aWallUpgrade[1], 1, 0, "#903") ; Click upgrade button to upgrade
 							If _Sleep($DELAYCHECKTOMBS2) Then Return
-							If _ColorCheck(_GetPixelColor($aWallUpgradeOK[0], $aWallUpgradeOK[1], True), Hex($aWallUpgradeOK[2], 6), $aWallUpgradeOK[3]) = True Then ; color yellow "wall possible for bh level"
+							If isGemOpen(True) Then
+								ClickP($aAway, 1, 0, "#0932") ; click away
+								SetLog("Upgrade stopped due no loot", $COLOR_ERROR)
+								ExitLoop
+							ElseIf _ColorCheck(_GetPixelColor($aWallUpgradeOK[0], $aWallUpgradeOK[1], True), Hex($aWallUpgradeOK[2], 6), $aWallUpgradeOK[3]) = True Then ; color yellow "wall possible for bh level"
 								SetLog("Builder Base Wall Upgrade Successfully!")
-								GemClick($aWallUpgradeOK[0], $aWallUpgradeOK[1], 1, 0, "#904") ; Confirm Upgrade
+								Click($aWallUpgradeOK[0], $aWallUpgradeOK[1], 1, 0, "#904") ; Confirm Upgrade
 								If _Sleep($DELAYRESPOND) Then Return
 								ClickP($aAway, 1, 0, "#0932") ;Click Away
 							Else
@@ -78,14 +83,14 @@ Func WallsUpgradeBB()
 							EndIf
 						EndIf
 					Else
-						SetLog("Position : " & $WallsBBNXY[$i][1] & ", " & $WallsBBNXY[$i][2] & " is not a Wall Level: " & $BBWallLevel & ".", $COLOR_ERROR)
+						SetLog("Position : " & $WallsBBNXY[$i][1] & ", " & $WallsBBNXY[$i][2] & " is not a Wall Level: " & $iBBWallLevel & ".", $COLOR_ERROR)
 						ClickP($aAway, 1, 0, "#0932") ;Click Away
 					EndIf
 					If _Sleep($DELAYCHECKTOMBS2) Then Return
 					; Check Gold for more then one wall.
 					BuilderBaseReport() ; check builderbase report before upgrade another wall
 					If _Sleep($DELAYRESPOND) Then Return
-					If Number($g_aiCurrentLootBB[$eLootGoldBB]) < $g_aiWallBBInfoPerLevel[$BBWallLevel + 1][1] Then
+					If Number($g_aiCurrentLootBB[$eLootGoldBB]) < $iBBNextLevelCost Then
 						SetLog("Upgrade stopped due to insufficient Gold!", $COLOR_INFO)
 						ExitLoop
 					EndIf
@@ -93,7 +98,7 @@ Func WallsUpgradeBB()
 			Else
 				SwitchToNextWallBBLevel()
 			EndIf
-		ElseIf $g_iFreeBuilderCountBB > 0 And $g_bChkBBUpgradeWalls = True And Number($g_aiCurrentLootBB[$eLootGoldBB]) < $g_aiWallBBInfoPerLevel[$BBWallLevel + 1][1] Then
+		ElseIf $g_iFreeBuilderCountBB > 0 And $g_bChkBBUpgradeWalls = True And Number($g_aiCurrentLootBB[$eLootGoldBB]) < $iBBNextLevelCost Then
 			SetLog("Upgrade stopped due to insufficient Gold", $COLOR_INFO)
 		Else
 			SetLog("Builder not available to upgrade Wall!")

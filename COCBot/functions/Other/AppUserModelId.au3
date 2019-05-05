@@ -7,11 +7,11 @@
 ; Return values .: Success - Returns current AppId
 ;                  Failure - Returns "" and sets @error:
 ; Author ........: binhnx, jackchen
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Link ..........: https://www.autoitscript.com/forum/topic/168099-how-to-prevent-multiple-guis-from-combining-in-the-taskbar/
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Example .......: No
 ; ===============================================================================================================================

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -90,7 +90,7 @@ Func CreateVillageAchievements()
 	$y = 200
 	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "Group_02", "How to use Unbreakable Mode"), $x - 20, $y - 20, $g_iSizeWGrpTab2, 200)
 		Local $txtHelp = GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_01", "Unbreakable mode will help you gain defense wins and the ""Unbreakable"" achievement.") & @CRLF & _
-						 GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_02", "Set ""Wait Time"" to how long you want the bot to wait for defenses.") & @CRLF & _
+						 GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_02", "Set 'Wait Time' to how long you want the bot to wait for defenses.") & @CRLF & _
 						 GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_03", "Farm Min is how many resources the bot must have before attacking.") & @CRLF & _
 						 GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_04", "Save Min is how many resources the bot must have before starting unbreakable mode.") & @CRLF & _
 						 GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "txtHelp_05", "Click the below link for more information:")

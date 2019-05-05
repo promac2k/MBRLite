@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: KnowJack(07-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func getBSPos()
@@ -136,7 +136,14 @@ EndFunc   ;==>getBSPos
 
 Func getAndroidPos($FastCheck = False, $RetryCount1 = 0, $RetryCount2 = 0, $bWidthFirst = Default)
 	Static $asControlSize[6][4]
-	Local $aControlSize = ControlGetPos(GetCurrentAndroidHWnD(), $g_sAppPaneName, GetAndroidControlClass(True))
+	If $g_bAndroidControlUseParentPos Then
+		; If true, control pos is used from parent control (only used to fix docking for Nox in DirectX mode)
+		Local $hCtrl = ControlGetHandle(GetCurrentAndroidHWnD(), $g_sAppPaneName, GetAndroidControlClass(True))
+		Local $hCtrlParent = _WinAPI_GetParent($hCtrl)
+		Local $aControlSize = ControlGetPos(GetCurrentAndroidHWnD(), "", $hCtrlParent)
+	Else
+		Local $aControlSize = ControlGetPos(GetCurrentAndroidHWnD(), $g_sAppPaneName, GetAndroidControlClass(True))
+	EndIf
 	Local $aControlSizeInitial = $aControlSize
 
 	;If Not $g_bRunState Or $FastCheck Then Return $aControlSize

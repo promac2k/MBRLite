@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac Jan 2017
 ; Modified ......: ProMac Jul 2018, ProMac Dec 2018
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2015-2016
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -317,8 +317,18 @@ Func SmartFarmDetection($txtBuildings = "Mines")
 					$aReturn[UBound($aReturn) - 1][1] = $DetectedPoint[1] ; Y
 					$aReturn[UBound($aReturn) - 1][4] = Side($tempObbjs)
 					$distance2RedLine = $aReturn[UBound($aReturn) - 1][4] = "BL" ? 50 : 45
-					$aReturn[UBound($aReturn) - 1][5] = $sNearTemp[$i] <> "" ? $sNearTemp[$i] : "0,0" ; will be a string inside : 708,360|705,358|720,370|705,353|722,371
-					$aReturn[UBound($aReturn) - 1][2] = Number($Distance[$i]) > 0 ? Number($Distance[$i]) : 200
+					;Just in case check if $sNearTemp has $i index to avoid crash
+					If $i < UBound($sNearTemp) Then
+						$aReturn[UBound($aReturn) - 1][5] = $sNearTemp[$i] <> "" ? $sNearTemp[$i] : "0,0" ; will be a string inside : 708,360|705,358|720,370|705,353|722,371
+					Else
+						$aReturn[UBound($aReturn) - 1][5] = "0,0"
+					EndIf
+					;Just in case check if $Distance has $i index to avoid crash
+					If $i < UBound($Distance) Then
+						$aReturn[UBound($aReturn) - 1][2] = Number($Distance[$i]) > 0 ? Number($Distance[$i]) : 200
+					Else
+						$aReturn[UBound($aReturn) - 1][2] = 200
+					EndIf
 					$aReturn[UBound($aReturn) - 1][3] = ($aReturn[UBound($aReturn) - 1][2] > $distance2RedLine) ? ("In") : ("Out") ; > 40 pixels the resource is far away from redline
 				Next
 			Else
@@ -442,11 +452,11 @@ Func DebugImageSmartFarm($THdetails, $aIn, $aOut, $sTime, $BestSideToAttack, $re
 			$tempObbj = StringSplit($aIn[$i][5], "|", $STR_NOCOUNT) ; several detected points
 			For $t = 0 To UBound($tempObbj) - 1
 				$tempObbjs = StringSplit($tempObbj[$t], ",", $STR_NOCOUNT)
-				_GDIPlus_GraphicsDrawRect($hGraphic, $tempObbjs[0], $tempObbjs[1], 5, 5, $hPen2)
+				If UBound($tempObbjs) > 1 Then _GDIPlus_GraphicsDrawRect($hGraphic, $tempObbjs[0], $tempObbjs[1], 5, 5, $hPen2)
 			Next
 		Else
 			$tempObbj = StringSplit($aOut[$i][5], ",", $STR_NOCOUNT)
-			_GDIPlus_GraphicsDrawRect($hGraphic, $tempObbj[0], $tempObbj[1], 5, 5, $hPen2)
+			If UBound($tempObbj) > 1 Then _GDIPlus_GraphicsDrawRect($hGraphic, $tempObbj[0], $tempObbj[1], 5, 5, $hPen2)
 		EndIf
 		$tempObbj = Null
 		$tempObbjs = Null
@@ -461,11 +471,11 @@ Func DebugImageSmartFarm($THdetails, $aIn, $aOut, $sTime, $BestSideToAttack, $re
 			$tempObbj = StringSplit($aOut[$i][5], "|", $STR_NOCOUNT) ; several detected points
 			For $t = 0 To UBound($tempObbj) - 1
 				$tempObbjs = StringSplit($tempObbj[$t], ",", $STR_NOCOUNT)
-				_GDIPlus_GraphicsDrawRect($hGraphic, $tempObbjs[0], $tempObbjs[1], 5, 5, $hPen2)
+				If UBound($tempObbjs) > 1 Then _GDIPlus_GraphicsDrawRect($hGraphic, $tempObbjs[0], $tempObbjs[1], 5, 5, $hPen2)
 			Next
 		Else
 			$tempObbj = StringSplit($aOut[$i][5], ",", $STR_NOCOUNT)
-			_GDIPlus_GraphicsDrawRect($hGraphic, $tempObbj[0], $tempObbj[1], 5, 5, $hPen2)
+			If UBound($tempObbj) > 1 Then _GDIPlus_GraphicsDrawRect($hGraphic, $tempObbj[0], $tempObbj[1], 5, 5, $hPen2)
 		EndIf
 		$tempObbj = Null
 		$tempObbjs = Null
@@ -479,9 +489,7 @@ Func DebugImageSmartFarm($THdetails, $aIn, $aOut, $sTime, $BestSideToAttack, $re
 		$aTEMP = StringSplit($redline[$l], "|", 2)
 		For $i = 0 To UBound($aTEMP) - 1
 			$DecodeEachPoint = StringSplit($aTEMP[$i], ",", 2)
-			If UBound($DecodeEachPoint) > 1 Then
-				_GDIPlus_GraphicsDrawRect($hGraphic, $DecodeEachPoint[0], $DecodeEachPoint[1], 5, 5, $hPen2)
-			EndIf
+			If UBound($DecodeEachPoint) > 1 Then _GDIPlus_GraphicsDrawRect($hGraphic, $DecodeEachPoint[0], $DecodeEachPoint[1], 5, 5, $hPen2)
 		Next
 	Next
 
@@ -588,6 +596,7 @@ Func AttackSmartFarm($Nside, $SIDESNAMES)
 				, [$eHogs, $nbSides, 1, 1, 1] _
 				, [$eValk, $nbSides, 1, 1, 0] _
 				, [$eBowl, $nbSides, 1, 1, 0] _
+				, [$eIceG, $nbSides, 1, 1, 1] _
 				, [$eMine, $nbSides, 1, 1, 0] _
 				, [$eEDrag, $nbSides, 1, 1, 0] _
 				, [$eWall, $nbSides, 1, 1, 1] _
@@ -599,7 +608,6 @@ Func AttackSmartFarm($Nside, $SIDESNAMES)
 				, [$eGobl, $nbSides, 1, 1, 0] _
 				, [$eHeal, $nbSides, 1, 1, 1] _
 				, [$ePekk, $nbSides, 1, 1, 1] _
-				, [$eIceG, $nbSides, 1, 1, 1] _
 				, ["HEROES", 1, 2, 1, 1] _
 				]
 	EndIf
@@ -776,9 +784,11 @@ Func LaunchTroopSmartFarm($listInfoDeploy, $iCC, $iKing, $iQueen, $iWarden, $SID
 			Local $infoPixelDropTroop = $listInfoDeployTroopPixel[$i]
 			If Not (IsString($infoPixelDropTroop[0]) And ($infoPixelDropTroop[0] = "CC" Or $infoPixelDropTroop[0] = "HEROES")) Then
 				Local $numberLeft = ReadTroopQuantity($infoPixelDropTroop[0])
-				If $g_bDebugSetlog Then SetDebugLog("Slot Nun= " & $infoPixelDropTroop[0])
-				If $g_bDebugSetlog Then SetDebugLog("Slot Xaxis= " & GetXPosOfArmySlot($infoPixelDropTroop[0], True))
-				If $g_bDebugSetlog Then SetDebugLog($infoPixelDropTroop[5] & " - NumberLeft : " & $numberLeft)
+				If $g_bDebugSetlog Then
+					SetDebugLog("Slot Nun= " & $infoPixelDropTroop[0])
+					SetDebugLog("Slot Xaxis= " & GetXPosOfArmySlot($infoPixelDropTroop[0], True))
+					SetDebugLog($infoPixelDropTroop[5] & " - NumberLeft : " & $numberLeft)
+				EndIf
 				If ($numberLeft > 0) Then
 					If _Sleep($DELAYLAUNCHTROOP21) Then Return
 					SelectDropTroop($infoPixelDropTroop[0]) ;Select Troop

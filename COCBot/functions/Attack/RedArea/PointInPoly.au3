@@ -10,10 +10,10 @@
 ; Return values .: None
 ; Author ........: Malkey from https://www.autoitscript.com/forum/topic/89034-check-if-a-point-is-within-various-defined-closed-shapes/
 ; Modified ......: MonkeyHunter (05-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func _IsPointInPoly($x, $y, $aPoints)
@@ -45,10 +45,10 @@ EndFunc   ;==>_IsPointInPoly
 ; Return values .: True if inside polygon
 ; Author ........: MonkeyHunter (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func IsPointOnSide($aCoords, $sSide)
@@ -59,13 +59,13 @@ Func IsPointOnSide($aCoords, $sSide)
 	Switch $sSide
 		Case "TL", "TOP-LEFT-UP", "TOP-LEFT-DOWN"
 			; $aPoints [0][0] = number of vertex, each row holds x, y
-			Local $aPoints[5][2] = [[3, 0], [425, 345], [5, 345], [425, 30], [425, 345]]
+			Local $aPoints[5][2] = [[3, 0], [$DiamondMiddleX, $DiamondMiddleY], [5, $DiamondMiddleY], [$DiamondMiddleX, 30], [$DiamondMiddleX, $DiamondMiddleY]]
 		Case "TR", "TOP-RIGHT-UP", "TOP-RIGHT-DOWN"
-			Local $aPoints[5][2] = [[3, 0], [425, 345], [425, 30], [845, 345], [425, 345]]
+			Local $aPoints[5][2] = [[3, 0], [$DiamondMiddleX, $DiamondMiddleY], [$DiamondMiddleX, 30], [845, $DiamondMiddleY], [$DiamondMiddleX, $DiamondMiddleY]]
 		Case "BL", "BOTTOM-LEFT-UP", "BOTTOM-LEFT-DOWN"
-			Local $aPoints[5][2] = [[3, 0], [425, 345], [5, 345], [425, 660], [425, 345]]
+			Local $aPoints[5][2] = [[3, 0], [$DiamondMiddleX, $DiamondMiddleY], [5, $DiamondMiddleY], [$DiamondMiddleX, 620], [$DiamondMiddleX, $DiamondMiddleY]]
 		Case "BR", "BOTTOM-RIGHT-UP", "BOTTOM-RIGHT-DOWN"
-			Local $aPoints[5][2] = [[3, 0], [425, 345], [845, 345], [425, 660], [425, 345]]
+			Local $aPoints[5][2] = [[3, 0], [$DiamondMiddleX, $DiamondMiddleY], [845, $DiamondMiddleY], [$DiamondMiddleX, 620], [$DiamondMiddleX, $DiamondMiddleY]]
 		Case Else
 			SetLog("IsPointOnSide() 'side' string not recognized", $COLOR_ERROR)
 			Return SetError(1, 0, "")
@@ -83,10 +83,10 @@ EndFunc   ;==>IsPointOnSide
 ; Return values .: New count of locations in string
 ; Author ........: MonkeyHunter (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func RemoveDupNearby(ByRef $sLocCoord, $iDistance = 8)
@@ -194,10 +194,10 @@ EndFunc   ;==>RemoveDupNearby
 ; Return values .: Returns new count of locations in $sLoc1Coord - adds new points to Existing location string by reference
 ; Author ........: MonkeyHunter (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func AddPoints_RemoveDuplicate(ByRef $sLoc1Coord, $sLoc2Coord, $iReturnpoints, $iDistance = 8)
@@ -300,10 +300,10 @@ EndFunc   ;==>AddPoints_RemoveDuplicate
 ; Return values .: FALSE if any location is on outside when $sSide - "IN"  or FALSE when any location is on inside when $sSide = "OUT", TRUE when all locations met conditions
 ; Author ........: MonkeyHunter (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func IsNearCircle($aTargetLoc, $aBuildingNearPoints, $iDistance = 25, $sSide = "IN")

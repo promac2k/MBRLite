@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 ;#include-once
@@ -136,25 +136,25 @@
 #include "functions\CreateArmy\getArmyCCSiegeMachines\getArmyCCSiegeMachines.au3"
 #EndRegion CreateArmy / Train
 
-#include "functions\Image Search\ImageSearch.au3"
-#include "functions\Image Search\checkDeadBase.au3"
-#include "functions\Image Search\CheckTombs.au3"
-#include "functions\Image Search\imglocAuxiliary.au3"
-#include "functions\Image Search\imglocCheckWall.au3"
-#include "functions\Image Search\imglocTHSearch.au3"
-#include "functions\Image Search\imglocAttackBar.au3"
-#include "functions\Image Search\QuickMIS.au3"
+#include "functions\ImageSearch\ImageSearch.au3"
+#include "functions\ImageSearch\checkDeadBase.au3"
+#include "functions\ImageSearch\CheckTombs.au3"
+#include "functions\ImageSearch\imglocAuxiliary.au3"
+#include "functions\ImageSearch\imglocCheckWall.au3"
+#include "functions\ImageSearch\imglocTHSearch.au3"
+#include "functions\ImageSearch\imglocAttackBar.au3"
+#include "functions\ImageSearch\QuickMIS.au3"
 
-#include "functions\Main Screen\checkMainScreen.au3"
-#include "functions\Main Screen\checkObstacles.au3"
-#include "functions\Main Screen\GetDPI_Ratio.au3"
-#include "functions\Main Screen\isGemOpen.au3"
-#include "functions\Main Screen\isNoUpgradeLoot.au3"
-#include "functions\Main Screen\isProblemAffect.au3"
-#include "functions\Main Screen\checkAttackDisable.au3"
-#include "functions\Main Screen\RemoveGhostTrayIcons.au3"
-#include "functions\Main Screen\waitMainScreen.au3"
-#include "functions\Main Screen\isOnBuilderBase.au3"
+#include "functions\MainScreen\checkMainScreen.au3"
+#include "functions\MainScreen\checkObstacles.au3"
+#include "functions\MainScreen\GetDPI_Ratio.au3"
+#include "functions\MainScreen\isGemOpen.au3"
+#include "functions\MainScreen\isNoUpgradeLoot.au3"
+#include "functions\MainScreen\isProblemAffect.au3"
+#include "functions\MainScreen\checkAttackDisable.au3"
+#include "functions\MainScreen\RemoveGhostTrayIcons.au3"
+#include "functions\MainScreen\waitMainScreen.au3"
+#include "functions\MainScreen\isOnBuilderBase.au3"
 
 ; Android support for MEmu, Nox, BlueStacks...
 #include "functions\Android\AndroidMenuShortcuts.au3"
@@ -222,11 +222,11 @@
 #include "functions\Pixels\_MultiPixelSearch.au3"
 #include "functions\Pixels\isInsideDiamond.au3"
 
-#include "functions\Read Text\getBuilderCount.au3"
-#include "functions\Read Text\BuildingInfo.au3"
-#include "functions\Read Text\getOcr.au3"
-#include "functions\Read Text\getPBTime.au3"
-#include "functions\Read Text\getShieldInfo.au3"
+#include "functions\ReadText\getBuilderCount.au3"
+#include "functions\ReadText\BuildingInfo.au3"
+#include "functions\ReadText\getOcr.au3"
+#include "functions\ReadText\getPBTime.au3"
+#include "functions\ReadText\getShieldInfo.au3"
 
 #include "functions\Search\multiSearch.au3"
 #include "functions\Search\WeakBase.au3"
@@ -265,7 +265,6 @@
 #include "functions\Village\LocateTownHall.au3"
 #include "functions\Village\LocateHeroesAltar.au3"
 #include "functions\Village\ProfileReport.au3"
-#include "functions\Village\ReArm.au3"
 #include "functions\Village\RequestCC.au3"
 #include "functions\Village\VillageReport.au3"
 #include "functions\Village\UpgradeBuilding.au3"

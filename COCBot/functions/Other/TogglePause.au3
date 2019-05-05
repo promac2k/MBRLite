@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -33,6 +33,9 @@ EndFunc   ;==>TogglePauseImpl
 
 Func TogglePauseUpdateState($Source)
 	$g_iActualTrainSkip = 0
+
+	; always resume Android (CoC game)
+	ResumeAndroid()
 
 	$g_bTogglePauseUpdateState = False
     If $g_bBotPaused Then

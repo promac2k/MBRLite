@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: z0mbie (2015)
 ; Modified ......: Master1st (09-2015), ProMac (10-2015), MonkeyHunter (06-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func UpgradeHeroes()
@@ -41,7 +41,7 @@ Func UpgradeHeroes()
 	EndIf
 
 	;Check if Auto Lab Upgrade is enabled and if a Dark Troop is selected for Upgrade. If yes, it has priority!
-	If $g_bAutoLabUpgradeEnable And $g_iCmbLaboratory >= 20 And $g_iCmbLaboratory <= 30 And ($g_bUpgradeQueenEnable Or $g_bUpgradeKingEnable ) Then
+	If $g_bAutoLabUpgradeEnable And $g_iCmbLaboratory >= 20 And $g_iCmbLaboratory <= 30 And ($g_bUpgradeQueenEnable Or $g_bUpgradeKingEnable) Then
 		SetLog("Laboratory needs DE to Upgrade :  " & $g_avLabTroops[$g_iCmbLaboratory][3])
 		SetLog("Skipping the Queen/King Upgrade!")
 		Return
@@ -73,7 +73,7 @@ Func UpgradeHeroes()
 		If _Sleep($DELAYUPGRADEHERO1) Then Return
 	EndIf
 
-		;Check if Auto Lab Upgrade is enabled and if a Elixir Troop is selected for Upgrade. If yes, it has priority!
+	;Check if Auto Lab Upgrade is enabled and if a Elixir Troop is selected for Upgrade. If yes, it has priority!
 	If $g_bAutoLabUpgradeEnable And $g_iCmbLaboratory < 20 And $g_bUpgradeWardenEnable Then
 		SetLog("Laboratory needs Elixir to Upgrade :  " & $g_avLabTroops[$g_iCmbLaboratory][3])
 		SetLog("Skipping the Grand Warden Upgrade!")
@@ -105,11 +105,11 @@ Func QueenUpgrade()
 	If _Sleep($DELAYUPGRADEHERO2) Then Return
 
 	;Get Queen info and Level
-	Local $sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+	Local $sInfo = BuildingInfo(242, 464) ; 860x644
 	If @error Then SetError(0, 0, 0)
 	Local $CountGetInfo = 0
 	While IsArray($sInfo) = False
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If @error Then SetError(0, 0, 0)
 		Sleep(100)
 		$CountGetInfo += 1
@@ -157,16 +157,12 @@ Func QueenUpgrade()
 		Return
 	EndIf
 
-	Local $offColors[3][3] = [[0xE07B50, 41, 23], [0x282020, 72, 0], [0xF5F9F2, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel black, 4th pixel edge of button
-	Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 710, 620 + $g_iBottomOffsetY, 1, 1, Hex(0xF5F6F2, 6), $offColors, 30) ; first gray/white pixel of button
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then     ; RC Done
 
-	If IsArray($ButtonPixel) Then
-		If $g_bDebugSetlog And IsArray($ButtonPixel) Then
-			SetLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
-			SetLog("Color #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 41, $ButtonPixel[1] + 23, True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 72, $ButtonPixel[1], True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 79, $ButtonPixel[1], True), $COLOR_DEBUG)
-		EndIf
+		If $g_bDebugSetlog Then SetLog("Upgrade Button Found At = " & $g_iQuickMISWOffSetX & ", " & $g_iQuickMISWOffSetY, $COLOR_DEBUG)
+
 		If _Sleep($DELAYUPGRADEHERO2) Then Return
-		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0305") ; Click Upgrade Button
+		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0305") ; Click Upgrade Button
 		If _Sleep($DELAYUPGRADEHERO3) Then Return ; Wait for window to open
 		If $g_bDebugImageSave Then DebugImageSave("UpgradeDarkBtn1")
 		If _ColorCheck(_GetPixelColor(721, 118 + $g_iMidOffsetY, True), Hex(0xE00408, 6), 20) Then ; Check if the Hero Upgrade window is open
@@ -214,11 +210,11 @@ Func KingUpgrade()
 	If _Sleep($DELAYUPGRADEHERO2) Then Return
 
 	;Get King info
-	Local $sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+	Local $sInfo = BuildingInfo(242, 464) ; 860x644
 	If @error Then SetError(0, 0, 0)
 	Local $CountGetInfo = 0
 	While IsArray($sInfo) = False
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If @error Then SetError(0, 0, 0)
 		If _Sleep(100) Then Return
 		$CountGetInfo += 1
@@ -266,16 +262,12 @@ Func KingUpgrade()
 		Return
 	EndIf
 
-	Local $offColors[3][3] = [[0xE07B50, 41, 23], [0x282020, 72, 0], [0xF4F5F2, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel black, 4th pixel edge of button
-	Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 710, 620 + $g_iBottomOffsetY, 1, 1, Hex(0xF5F6F2, 6), $offColors, 30) ; first gray/white pixel of button
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
 
-	If IsArray($ButtonPixel) Then
-		If $g_bDebugSetlog And IsArray($ButtonPixel) Then
-			SetLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
-			SetLog("Color #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 41, $ButtonPixel[1] + 23, True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 72, $ButtonPixel[1], True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 79, $ButtonPixel[1], True), $COLOR_DEBUG)
-		EndIf
+		If $g_bDebugSetlog Then SetLog("Upgrade Button Found At = " & $g_iQuickMISWOffSetX & ", " & $g_iQuickMISWOffSetY, $COLOR_DEBUG)
+
 		If _Sleep($DELAYUPGRADEHERO2) Then Return
-		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0305") ; Click Upgrade Button
+		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0305") ; Click Upgrade Button
 		If _Sleep($DELAYUPGRADEHERO3) Then Return ; Wait for window to open
 		If $g_bDebugImageSave Then DebugImageSave("UpgradeDarkBtn1")
 		If _ColorCheck(_GetPixelColor(715, 120 + $g_iMidOffsetY, True), Hex(0xE01C20, 6), 20) Then ; Check if the Hero Upgrade window is open
@@ -327,11 +319,11 @@ Func WardenUpgrade()
 	If _Sleep($DELAYUPGRADEHERO2) Then Return
 
 	;Get Warden info
-	Local $sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+	Local $sInfo = BuildingInfo(242, 464) ; 860x644
 	If @error Then SetError(0, 0, 0)
 	Local $CountGetInfo = 0
 	While IsArray($sInfo) = False
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If @error Then SetError(0, 0, 0)
 		If _Sleep(100) Then Return
 		$CountGetInfo += 1
@@ -379,15 +371,12 @@ Func WardenUpgrade()
 		Return
 	EndIf
 	If _Sleep($DELAYUPGRADEHERO2) Then Return
-	Local $offColors[3][3] = [[0xBC5B31, 38, 32], [0xF84CF9, 72, 0], [0xF5F9F2, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel pink, 4th pixel edge of button
-	Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 710, 620 + $g_iBottomOffsetY, 1, 1, Hex(0xF4F7F2, 6), $offColors, 30) ; first gray/white pixel of button
-	If IsArray($ButtonPixel) Then
-		If $g_bDebugSetlog And IsArray($ButtonPixel) Then
-			SetLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
-			SetLog("Color #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 41, $ButtonPixel[1] + 23, True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 72, $ButtonPixel[1], True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 79, $ButtonPixel[1], True), $COLOR_DEBUG)
-		EndIf
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
+
+		If $g_bDebugSetlog Then SetLog("Upgrade Button Found At = " & $g_iQuickMISWOffSetX & ", " & $g_iQuickMISWOffSetY, $COLOR_DEBUG)
+
 		If _Sleep($DELAYUPGRADEHERO2) Then Return
-		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0305") ; Click Upgrade Button
+		Click($g_iQuickMISWOffSetX, $g_iQuickMISWOffSetY, 1, 0, "#0305") ; Click Upgrade Button
 		If _Sleep($DELAYUPGRADEHERO3) Then Return ; Wait for window to open
 		If $g_bDebugSetlog Then DebugImageSave("UpgradeElixirBtn1")
 		If $g_bDebugSetlog Then SetDebugLog("pixel: " & _GetPixelColor(718, 120 + $g_iMidOffsetY, True) & " expected " & Hex(0xDD0408, 6) & " result: " & _ColorCheck(_GetPixelColor(718, 120 + $g_iMidOffsetY, True), Hex(0xDD0408, 6), 20), $COLOR_DEBUG)

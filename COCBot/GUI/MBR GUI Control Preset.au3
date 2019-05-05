@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -109,11 +109,11 @@ Func PresetSaveConf()
 EndFunc   ;==>PresetSaveConf
 
 Func PresetDeleteConf()
-	Local $button = MsgBox($MB_ICONWARNING + $MB_OKCANCEL, GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_01", "Delete Configuration"), GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_02", 'Are you sure you want to delete the configuration ?') & GUICtrlRead($g_hCmbPresetList) & '"?' & @CRLF & _
+	Local $button = MsgBox($MB_ICONWARNING + $MB_OKCANCEL, GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_01", "Delete Configuration"), GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_02", 'Are you sure you want to delete the configuration ?') & GUICtrlRead($g_hCmbPresetList) & '?' & @CRLF & _
 			"This cannot be undone.")
 	If $button = $IDOK Then
-		SetDebugLog("PresetDeleteConf: " & $g_sProfilePresetPath & "\" & GUICtrlRead($g_hCmbPresetList) & ".ini")
-		FileDelete($g_sProfilePresetPath & "\" & GUICtrlRead($g_hCmbPresetList) & ".ini")
+		SetDebugLog("PresetDeleteConf: " & $g_sProfilePresetPath & $FORWARD_SLASH & GUICtrlRead($g_hCmbPresetList) & ".ini")
+		FileDelete($g_sProfilePresetPath & $FORWARD_SLASH & GUICtrlRead($g_hCmbPresetList) & ".ini")
 ;~ 		applyPreset()
 		saveconfig()
 		readconfig()

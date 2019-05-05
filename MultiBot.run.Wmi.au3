@@ -3,10 +3,10 @@
 ; Description ...: This file contens the Sequence that runs all MBR Bot
 ; Author ........: cosote (03-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -56,6 +56,12 @@ Global Const $COLOR_DEBUG2 = 0xaa80ff ; lt Purple, secondary debug color
 Global Const $COLOR_DEBUGS = $COLOR_MEDGRAY ; Med Grey, debug color for less important but needed supporting data points in multiple messages
 Global Const $COLOR_ACTION = 0xFF8000 ; Med Orange, debug color for individual actions, clicks, etc
 Global Const $COLOR_ACTION1 = 0xcc80ff ; Light Purple, debug color for pixel/window checks
+
+Func DoubleQuote($text)
+	;e.g $text=some text
+	;This function will add double quote so it will become "some text"
+	Return Chr(34) & $text & Chr(34)
+EndFunc   ;==>DoubleQuote
 
 Func _Sleep($ms, $iSleep = True, $CheckRunState = True)
 	Sleep($ms)

@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Sardo (2015-11), Hervidero (2015-11), Boju (2017-04)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MyBot Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 

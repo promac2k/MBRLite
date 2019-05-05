@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: Cosote (02-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -32,7 +32,7 @@ Func OpenNox($bRestart = False)
 
 	$hTimer = __TimerInit()
 
-	If WaitForRunningVMS($g_iAndroidLaunchWaitSec - __TimerDiff($hTimer) / 1000, $hTimer) Then Return False
+	; If WaitForRunningVMS($g_iAndroidLaunchWaitSec - __TimerDiff($hTimer) / 1000, $hTimer) Then Return False
 
 	; update ADB port, as that can changes when Nox just started...
 	$g_bInitAndroid = True
@@ -80,7 +80,7 @@ EndFunc   ;==>IsNoxCommandLine
 Func GetNoxProgramParameter($bAlternative = False)
 	; see http://en.bignox.com/blog/?p=354
 	Local $customScreen = "-resolution:" & $g_iAndroidClientWidth & "x" & $g_iAndroidClientHeight & " -dpi:160"
-	Local $clone = """-clone:" & ($g_sAndroidInstance = "" ? $g_avAndroidAppConfig[$g_iAndroidConfig][1] : $g_sAndroidInstance) & """"
+	Local $clone = DoubleQuote("-clone:" & ($g_sAndroidInstance = "" ? $g_avAndroidAppConfig[$g_iAndroidConfig][1] : $g_sAndroidInstance))
 	If $bAlternative = False Then
 		; should be launched with these parameter
 		Return $customScreen & " " & $clone
@@ -142,7 +142,7 @@ Func GetNoxBackgroundMode()
 	If $sConfig Then
 		Local $graphic_engine_type = IniRead($sConfig, "setting", "graphic_engine_type", "") ; 0 = OpenGL, 1 = DirectX
 		Switch $graphic_engine_type
-			Case "0"
+			Case "0", ""
 				Return $iOpenGL
 			Case "1"
 				Return $iDirectX
@@ -219,7 +219,7 @@ Func InitNox($bCheckOnly = False)
 
 		;$g_sAndroidPicturesPath = "/mnt/shell/emulated/0/Download/other/"
 		;$g_sAndroidPicturesPath = "/mnt/shared/Other/"
-		$g_sAndroidPicturesPath = "(/mnt/shared/Other|/mnt/shell/emulated/0/Download/other)"
+		$g_sAndroidPicturesPath = "(/mnt/shared/Other|/mnt/shell/emulated/0/Download/other|/mnt/shell/emulated/0/Others)"
 		$aRegexResult = StringRegExp($__VBoxVMinfo, "Name: 'Other', Host path: '(.*)'.*", $STR_REGEXPARRAYGLOBALMATCH)
 		If Not @error Then
 			$g_bAndroidSharedFolderAvailable = True
@@ -233,10 +233,10 @@ Func InitNox($bCheckOnly = False)
 					; Just in case of 'Other' Folder doesn't exist
 					DirCreate($g_sAndroidPicturesHostPath)
 				EndIf
-			; > Nox v5.2.0.0
+				; > Nox v5.2.0.0
 			ElseIf FileExists(@HomeDrive & @HomePath & "\Nox_share\") Then
 				$g_bAndroidSharedFolderAvailable = True
-				$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\"
+				$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\Other\"
 				If Not FileExists($g_sAndroidPicturesHostPath) Then
 					; Just in case of 'Other' Folder doesn't exist
 					DirCreate($g_sAndroidPicturesHostPath)
@@ -255,6 +255,7 @@ Func InitNox($bCheckOnly = False)
 			If $v >= $v2 Then
 				SetDebugLog("Using Android Config of " & $g_sAndroidEmulator & " " & $__Nox_Config[$i][0])
 				$g_sAppClassInstance = $__Nox_Config[$i][1]
+				$g_bAndroidControlUseParentPos = $__Nox_Config[$i][2]
 				$g_avAndroidAppConfig[$g_iAndroidConfig][3] = $g_sAppClassInstance
 				ExitLoop
 			EndIf
@@ -292,19 +293,23 @@ Func SetScreenNox()
 
 	Local $cmdOutput, $process_killed
 
-	; These setting don't stick, so not used and instead using paramter: http://en.bignox.com/blog/?p=354
-	; Set width and height
-	;$cmdOutput = LaunchConsole($__VBoxManage_Path, "guestproperty set " & $g_sAndroidInstance & " vbox_graph_mode " & $g_iAndroidClientWidth & "x" & $g_iAndroidClientHeight & "-16", $process_killed)
-	; Set dpi
-	;$cmdOutput = LaunchConsole($__VBoxManage_Path, "guestproperty set " & $g_sAndroidInstance & " vbox_dpi 160", $process_killed)
+	; This Is a mistake , is necessary to get all possible Shared folders Paths
+	; @MyDocumentsDir & "\Nox_share\"
+	; > Nox v5.2.0.0
+	; 	@HomeDrive & @HomePath & "\Nox_share\"
+	Local $v = GetVersionNormalized($g_sAndroidVersion)
+	If $v >= GetVersionNormalized("5.2.0.0") Then
+		AndroidPicturePathAutoConfig(@HomeDrive & @HomePath & "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
+	Else
+		AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
+	EndIf
 
-	AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
 	If $g_bAndroidSharedFolderAvailable = False And $g_bAndroidPicturesPathAutoConfig = True And FileExists($g_sAndroidPicturesHostPath) = 1 Then
 		; remove tailing backslash
 		Local $path = $g_sAndroidPicturesHostPath
 		If StringRight($path, 1) = "\" Then $path = StringLeft($path, StringLen($path) - 1)
 		$cmdOutput = LaunchConsole($__VBoxManage_Path, "sharedfolder remove " & $g_sAndroidInstance & " --name Other", $process_killed)
-		$cmdOutput = LaunchConsole($__VBoxManage_Path, "sharedfolder add " & $g_sAndroidInstance & " --name Other --hostpath """ & $path & """  --automount", $process_killed)
+		$cmdOutput = LaunchConsole($__VBoxManage_Path, "sharedfolder add " & $g_sAndroidInstance & " --name Other --hostpath " & DoubleQuote($path) & "  --automount", $process_killed)
 	EndIf
 
 	; find Nox conf.ini in C:\Users\User\AppData\Local\Nox and set "Fix window size" to Enable, "Remember size and position" to Disable and screen res also
@@ -368,7 +373,16 @@ Func CheckScreenNox($bSetLog = True)
 	Next
 
 	; check if shared folder exists
-	If AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other", $bSetLog) Then $iErrCnt += 1
+	; This Is a mistake , is necessary to get all possible Shared folders Paths
+	; @MyDocumentsDir & "\Nox_share\"
+	; > Nox v5.2.0.0
+	; 	@HomeDrive & @HomePath & "\Nox_share\"
+	Local $v = GetVersionNormalized($g_sAndroidVersion)
+	If $v >= GetVersionNormalized("5.2.0.0") Then
+		AndroidPicturePathAutoConfig(@HomeDrive & @HomePath & "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
+	Else
+		AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
+	EndIf
 
 	If $iErrCnt > 0 Then Return False
 	Return True
@@ -377,17 +391,17 @@ EndFunc   ;==>CheckScreenNox
 
 Func GetNoxRunningInstance($bStrictCheck = True)
 	Local $a[2] = [0, ""]
-	SetDebugLog("GetAndroidRunningInstance: Try to find """ & $g_sAndroidProgramPath & """")
+	SetDebugLog("GetAndroidRunningInstance: Try to find " & DoubleQuote($g_sAndroidProgramPath))
 	For $PID In ProcessesExist($g_sAndroidProgramPath, "", 1) ; find all process
 		Local $currentInstance = $g_sAndroidInstance
 		; assume last parameter is instance
 		Local $CommandLine = ProcessGetCommandLine($PID)
-		SetDebugLog("GetNoxRunningInstance: Found """ & $CommandLine & """ by PID=" & $PID)
-		Local $aRegexResult = StringRegExp($CommandLine, ".*""-clone:([^""]+)"".*|.*-clone:([\S]+).*", $STR_REGEXPARRAYMATCH)
+		SetDebugLog("GetNoxRunningInstance: Found " & DoubleQuote($CommandLine) & " by PID=" & $PID)
+		Local $aRegexResult = StringRegExp($CommandLine, ".*" & Chr(34) & "-clone:([^" & Chr(34) & "]+)" & Chr(34) & ".*|.*-clone:([\S]+).*", $STR_REGEXPARRAYMATCH)
 		If @error = 0 Then
 			$g_sAndroidInstance = $aRegexResult[0]
 			If $g_sAndroidInstance = "" Then $g_sAndroidInstance = $aRegexResult[1]
-			SetDebugLog("Running " & $g_sAndroidEmulator & " instance is """ & $g_sAndroidInstance & """")
+			SetDebugLog("Running " & $g_sAndroidEmulator & " instance is " & DoubleQuote($g_sAndroidInstance))
 		EndIf
 		; validate
 		If WinGetAndroidHandle() <> 0 Then
@@ -458,7 +472,12 @@ Func EmbedNox($bEmbed = Default, $hHWndAfter = Default)
 		For $i = 1 To UBound($aWin) - 1
 			Local $h = $aWin[$i][0]
 			Local $c = $aWin[$i][1]
-			SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c, Default, True)
+			Local $aPos = WinGetPos($h)
+			If UBound($aPos) > 3 Then
+				SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c & ", width=" & $aPos[2] & ", height=" & $aPos[3]) ;, Default, True
+			Else
+				SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c) ;, Default, True
+			EndIf
 		Next
 	Else
 		SetDebugLog("EmbedNox(" & $bEmbed & "): $hToolbar=" & $hToolbar, Default, True)

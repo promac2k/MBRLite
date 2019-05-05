@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2015-2018
-;                  MultiBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot, previously known as Mybot and ClashGameBot. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -182,7 +182,7 @@ Func BuilderBaseCheckMachine(ByRef $aMachineStatus, $Test = 0)
 			For $i = 0 To 10
 				If _Sleep(200) Then Return
 				; $aResult[1] = Name , $aResult[2] = Level
-				Local $aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+				Local $aResult = BuildingInfo(242, 464)
 				If UBound($aResult) >= 2 Then ExitLoop
 				If $i = 10 Then
 					Setlog("Error geting the Machine Info!!", $COLOR_ERROR)

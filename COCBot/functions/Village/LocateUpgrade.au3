@@ -6,10 +6,10 @@
 ; Return values .:
 ; Author ........: KnowJack (April-2015)
 ; Modified ......: KnowJack (Jun/Aug-2015),Sardo 2015-08,Monkeyhunter(2106-2)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -237,7 +237,7 @@ Func UpgradeValue($inum, $bRepeat = False) ;function to find the value and type 
 
 	If $bOopsFlag = True And $g_bDebugImageSave Then DebugImageSave("ButtonView")
 
-	$aResult = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+	$aResult = BuildingInfo(242, 464) ; 860x644
 	If IsArray($aResult) Then
 		If UBound($aResult) > 2 And $aResult[0] > 0 Then
 			$g_avBuildingUpgrades[$inum][4] = $aResult[1] ; Store bldg name
@@ -256,7 +256,7 @@ Func UpgradeValue($inum, $bRepeat = False) ;function to find the value and type 
 	EndIf
 	SetLog("Upgrade Name = " & $g_avBuildingUpgrades[$inum][4] & ", Level = " & $g_avBuildingUpgrades[$inum][5], $COLOR_INFO) ;Debug
 
-	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 630 + $g_iBottomOffsetYNew, 740, 680 + $g_iBottomOffsetYNew) Then ; RC Done
+	If QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 608 + $g_iBottomOffsetYNew, 740, 670 + $g_iBottomOffsetYNew) Then ; RC Done
 		Local $ButtonPixel[2]
 		$ButtonPixel[0] = $g_iQuickMISWOffSetX
 		$ButtonPixel[1] = $g_iQuickMISWOffSetY

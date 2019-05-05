@@ -3,10 +3,10 @@
 ; Description ...: This file contains the initialization and main loop sequences f0r the MBR Bot
 ; Author ........:  (2014)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -320,7 +320,7 @@ Func UpdateAndroidConfig($instance = Default, $emulator = Default)
 	If $emulator <> Default Then SetLog("Unknown Android Emulator " & $emulator, $COLOR_RED)
 	If $instance = "" Then $instance = Default
 	If $instance = Default Then $instance = $g_avAndroidAppConfig[$g_iAndroidConfig][1]
-	SetDebugLog("UpdateAndroidConfig(""" & $instance & """)")
+	SetDebugLog("UpdateAndroidConfig(" & DoubleQuote($instance) & ")")
 
 	InitAndroidConfig(False)
 	$g_sAndroidInstance = $instance ; Clone or instance of emulator or "" if not supported/default instance
@@ -335,7 +335,7 @@ Func UpdateAndroidConfig($instance = Default, $emulator = Default)
 	; validate install and initialize Android variables
 	Local $Result = InitAndroid(False, False)
 
-	SetDebugLog("UpdateAndroidConfig(""" & $instance & """) END")
+	SetDebugLog("UpdateAndroidConfig(" & DoubleQuote($instance) & ") END")
 	Return $Result
 EndFunc   ;==>UpdateAndroidConfig
 
@@ -1262,8 +1262,8 @@ Func LaunchBotBackend($bNoGUI = True)
 	Next
 
 	$sParam = StringStripWS($sParam & ($bNoGUI ? " /ng" : "") & " /guipid=" & @AutoItPID, 3)
-	Local $cmd = """" & @ScriptDir & "\MultiBot.run.exe"""
-	If @Compiled = 0 Then $cmd = """" & @AutoItExe & """ /AutoIt3ExecuteScript """ & @ScriptDir & "\MultiBot.run.au3" & """"
+	Local $cmd = DoubleQuote(@ScriptDir & "\MultiBot.run.exe")
+	If @Compiled = 0 Then $cmd = DoubleQuote(@AutoItExe) & " /AutoIt3ExecuteScript " & DoubleQuote(@ScriptDir & "\MultiBot.run.au3")
 	$cmd &= " " & $sParam
 
 	; wait 5 Minutes for bot to complete boot

@@ -7,10 +7,10 @@
 ; Return values .: None
 ; Author ........: Code Monkey #69
 ; Modified ......: KnowJack (June 2015) Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -78,7 +78,7 @@ Func _LocateClanCastle()
 			ClickP($aAway, 1, 0, "#0376")
 			Return
 		EndIf
-		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
+		$sInfo = BuildingInfo(242, 464) ; 860x644
 		If IsArray($sInfo) And ($sInfo[0] > 1 Or $sInfo[0] = "") Then
 			If StringInStr($sInfo[1], "clan") = 0 Then
 				Local $sLocMsg = ($sInfo[0] = "" ? "Nothing" : $sInfo[1])

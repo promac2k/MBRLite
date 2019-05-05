@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Heridero, Zengzeng (2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 Func CheckPrerequisites($bSilent = False)
@@ -79,8 +79,7 @@ Func isEveryFileInstalled($bSilent = False)
 	Local $bResult = False, $iCount = 0
 
 	; folders and files needed checking
-	Local $aCheckFiles = [@ScriptDir & "\COCBot", _
-			$g_sLibPath, _
+	Local $aCheckFiles = [$g_sLibPath, _
 			@ScriptDir & "\Images", _
 			@ScriptDir & "\imgxml", _
 			$g_sLibPath & "\helper_functions.dll", _
@@ -96,7 +95,7 @@ Func isEveryFileInstalled($bSilent = False)
 	; How many .xml files in imgxml folder
 	Local $xmls = _FileListToArrayRec(@ScriptDir & "\imgxml\", "*.xml", $FLTAR_FILES + $FLTAR_NOHIDDEN, $FLTAR_RECUR, $FLTAR_NOSORT)
 	If IsArray($xmls) Then
-		If Number($xmls[0]) < 600 Then SetLog("Verify '\imgxml\' folder, found " & $xmls[0] & " *.xml files.", $COLOR_ERROR)
+		If Number($xmls[0]) < 700 Then SetLog("Verify '\imgxml\' folder, found " & $xmls[0] & " *.xml files.", $COLOR_ERROR)
 	EndIf
 
 	If $iCount = UBound($aCheckFiles) Then

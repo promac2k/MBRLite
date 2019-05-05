@@ -6,10 +6,10 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), kaganus (08-2015), CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
@@ -642,8 +642,6 @@ Func GUIControl_WM_COMMAND($hWind, $iMsg, $wParam, $lParam)
 			btnTestWardenMode()
 		Case $g_hBtnTestSwitchSiegeMachines
 			btnTestSwitchSiegeMachines()
-		Case $g_hBtnTestRearm
-			btnTestRearm()
 	EndSwitch
 
 	If $lParam = $g_hCmbGUILanguage Then
@@ -1328,6 +1326,12 @@ Func BotCloseRequestProcessed()
 EndFunc   ;==>BotCloseRequestProcessed
 
 Func BotClose($SaveConfig = Default, $bExit = True)
+	;Autoupdate
+	If $g_bAttackActive = True and $g_BotCloseCount <  1500 Then ; +/- 3 minutes time for end the attack
+		$g_BotCloseCount = $g_BotCloseCount +  1
+		Return True
+	EndIf
+
 	If $SaveConfig = Default Then $SaveConfig = IsBotLaunched()
 	$g_bRunState = False
 	$g_bBotPaused = False
@@ -1535,10 +1539,10 @@ EndFunc   ;==>tiExit
 ; Return values .: Boolean of former redraw state
 ; Author ........: Cosote (2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: Local $bWasRedraw = SetRedrawBotWindow(False)
 ;                  [...]
 ;                  SetRedrawBotWindow($bWasRedraw)

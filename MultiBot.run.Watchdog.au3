@@ -3,10 +3,10 @@
 ; Description ...: This file contens the Sequence that runs all MBR Bot
 ; Author ........: cosote (12-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
-;                  MyBot is distributed under the terms of the GNU GPL
+; Remarks .......: This file is part of MultiBot Lite is a Fork from MyBotRun. Copyright 2018-2019
+;                  MultiBot Lite is distributed under the terms of the GNU GPL
 ; Related .......:
-; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Link ..........: https://multibot.run/
 ; Example .......: No
 ; ===============================================================================================================================
 
@@ -85,6 +85,11 @@ Func GetTranslated($a, $b, $c)
 EndFunc   ;==>GetTranslated
 Func GetTranslatedFileIni($a, $b, $c)
 EndFunc   ;==>GetTranslatedFileIni
+Func DoubleQuote($text)
+	;e.g $text=some text
+	;This function will add double quote so it will become "some text"
+	Return Chr(34) & $text & Chr(34)
+EndFunc   ;==>DoubleQuote
 
 Func SetLog($String, $Color = $COLOR_BLACK, $LogPrefix = "L ")
 	Local $log = $LogPrefix & TimeDebug() & $String
