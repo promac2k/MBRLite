@@ -188,20 +188,17 @@ ReleaseLite
 ├── CHANGELOG_LANGUAGES
 ├── License.txt
 ├── MultiBot.run.au3
-├── MultiBot.run.exe
 ├── MultiBot.run.MiniGui.au3
-├── MultiBot.run.MiniGui.exe
 ├── MultiBot.run.version.au3
 ├── MultiBot.run.Watchdog.au3
-├── MultiBot.run.Watchdog.exe
-├── MultiBot.run.Wmi.au3
-└── MultiBot.run.Wmi.exe
+└── MultiBot.run.Wmi.au3
 ```
 
 Licensing
   ---------
 Please see the file called LICENSE.
-1. Forked from Mybot.run with same license , source code is shared and prepared to compile
+1. Forked from Mybot.run with same license , source code is shared and prepared to compile with autoit.
+   * https://www.autoitscript.com/site/autoit/
    * MyBot Autoit Code : https://github.com/MyBotRun/MyBot.
 
     ![Alt](https://mybot.run/forums/uploads/monthly_2018_08/mybotlogofixed.png.6cbb7380d0a5cc47527d8b8bdce0d2fd.png)
