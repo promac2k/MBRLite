@@ -189,7 +189,6 @@ ReleaseLite
 ├── License.txt
 ├── MultiBot.run.au3
 ├── MultiBot.run.exe
-├── MultiBot.run.MiniGui_Obfuscated.au3
 ├── MultiBot.run.MiniGui.au3
 ├── MultiBot.run.MiniGui.exe
 ├── MultiBot.run.version.au3
